@@ -1,0 +1,32 @@
+<div class="month-navigator">
+<div class="month-navigator__body">
+  <div class="selector-row">
+    <span class="title">{{initializeMoment}}</span>
+    <div data-button="prev" class="button mr-6">
+      <i data-button="prev" class="material-icons">navigate_before</i>
+    </div>
+    <div data-button="next" class="button next-month">
+      <i data-button="next" class="material-icons">navigate_next</i>
+    </div>
+  </div>
+
+  <div role="grid" class="table">
+    <div class="row week-header">
+      <span *ngFor="let title of getWeekdaysShortArray()" class="weekday-title cell"
+            data-text="Воскресенье"
+            data-tooltip-position="bottom">
+             {{title}}
+         </span>
+    </div>
+    <div class="row-group">
+      <div class="row" *ngFor="let w of weeksStartOf(initializeMoment, 6)">
+
+        <span *ngFor="let d of w" class="cell ${active}${grayDay}">
+          <div class="day-number">{{d.date()}}
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

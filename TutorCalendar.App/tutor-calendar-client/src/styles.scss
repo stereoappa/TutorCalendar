@@ -1,0 +1,28 @@
+$timeline-width: 40px;
+$border-color: #dadce0;
+$sidemenu-width: 256px;
+$cell-width: 81px;
+$cell-height: 40px;
+$title-height: 84px;
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
+@font-face {
+  font-family: 'Google Sans';
+  src: url(fonts/GoogleSans-Regular.ttf),
+  url(fonts/GoogleSans-Regular.woff),
+  url(fonts/GoogleSans-Regular.woff2);
+  font-weight: 400;
+  font-style: normal;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #app, .calendar{
+  height: 100%;
+  font-size: 14px;
+  font-family: Roboto,Helvetica,Arial,sans-serif;
+}
