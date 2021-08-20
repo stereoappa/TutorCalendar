@@ -1,0 +1,153 @@
+@import "variables";
+
+:host {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+
+  .row {
+    display: flex;
+  }
+
+  .table-container {
+    display: inline-flex;
+    position: relative;
+    min-width: 100%;
+    flex: none;
+
+    .days {
+      flex: 1 0 auto;
+      display: flex;
+      .day {
+        flex: 1 0 auto;
+        border-right: $border-color 1px solid;
+
+        .layout {
+          position: relative;
+          .slot {
+            position: absolute;
+            width: 95%;
+            z-index: 10;
+
+            cursor: pointer;
+            overflow: hidden;
+            outline: none;
+
+            border-radius: 4px;
+            background-color: rgb(179, 225, 247);
+
+            &:hover {
+              box-shadow: 0.5px 0.5px 4px rgba(0, 0, 0, 0.5);
+            }
+
+            .slot-content {
+              padding: 4px;
+              .slot-content-row {
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+  .table-title {
+    position: relative;
+    flex: 1 1 0%;
+
+    width: $cell-width;
+    min-width: $cell-width;
+    height: $title-height;
+
+    font-weight: 400;
+    margin: 0;
+    text-align: center;
+    width: 100%;
+
+    .data {
+      text-overflow: clip;
+
+      position: relative;
+      z-index: 2;
+      color: #70757a;
+
+      font-weight: 500;
+      letter-spacing: .8px;
+      margin-left: 0;
+
+      text-indent: .8px;
+      text-transform: uppercase;
+    }
+
+    .data.weekday{
+      margin-top: 8px;
+      line-height: 32px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .data.number-day{
+      font-family: 'Google Sans',Roboto,Arial,sans-serif;
+      font-size: 26px;
+      height: 46px;
+      line-height: 46px;
+
+      letter-spacing: -0.5px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: -8px;
+    }
+
+  }
+
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    width: $timeline-width;
+
+    .time-point {
+      height: $cell-height;
+      text-align: right;
+      padding-right: 8px;
+      line-height: 0px;
+    }
+  }
+
+  .grid {
+    border-top: $border-color 1px solid;
+
+    div {
+      height: $cell-height;
+
+      &::after {
+        content: '';
+        border-bottom: $border-color 1px solid;
+        position: absolute;
+        width: calc(100% - #{$timeline-width});
+        margin-top: -1px;
+        pointer-events: none;
+      }
+    }
+  }
+
+  .vertical-grid-line {
+    border-right: $border-color 1px solid;
+    pointer-events: none;
+  }
+
+  .title-grid-serif {
+    position: absolute;
+    bottom: 0;
+    height: 20px;
+    border-left: $border-color 1px solid;
+    margin-left: -1px;
+  }
+
+  .line-delta {
+    width: 9px;
+    min-width: 9px;
+  }
+}

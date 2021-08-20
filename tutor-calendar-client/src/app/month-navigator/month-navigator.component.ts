@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core'
 import * as moment from 'moment'
+import {Moment} from 'moment';
 
 @Component({
   selector: 'app-month-navigator',
@@ -12,6 +13,20 @@ export class MonthNavigatorComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  getNowMoment(): Moment{
+    return moment()
+  }
+
+  onClick(event: any): void {
+    const element = event.target.dataset.button
+    if (element === 'prev') {
+      this.initializeMoment.add(-1, 'M')
+    }
+    if (element === 'next') {
+      this.initializeMoment.add(1, 'M')
+    }
   }
 
   getWeekdaysShortArray(): string[] {

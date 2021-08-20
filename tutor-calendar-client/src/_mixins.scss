@@ -1,0 +1,57 @@
+@mixin input($width, $fontSize: 14px, $border: none) {
+  .group {
+    position: relative;
+    height: 36px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  input {
+    font-size: $fontSize;
+    font-weight: 400;
+    padding-left: 8px;
+    padding-right: 8px;
+    min-width: $width;
+    outline: none;
+    display: block;
+    height: 36px;
+    width: $width;
+    color: #3c4043;
+    background-color: rgba(255,255,255,0);
+    border: none;
+    border-bottom: $border;
+  }
+  input:focus {
+    outline: none;
+  }
+
+
+  .bar {
+    position: relative;
+    display: block;
+    width: $width;
+  }
+  .bar:before, .bar:after {
+    content: '';
+    height: 2px;
+    width: 0;
+    //bottom: 1px;
+    position: absolute;
+    background: #1A73E8;
+    transition: 0.2s ease all;
+    -moz-transition: 0.2s ease all;
+    -webkit-transition: 0.2s ease all;
+  }
+  .bar:before {
+    left: 50%;
+  }
+  .bar:after {
+    right: 50%;
+  }
+
+  /* active state */
+  input:focus ~ .bar:before, input:focus ~ .bar:after {
+    width: 50%;
+  }
+}
