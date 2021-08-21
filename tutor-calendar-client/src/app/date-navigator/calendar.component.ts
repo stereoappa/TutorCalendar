@@ -1,22 +1,30 @@
-import {Component, Input, OnInit} from '@angular/core'
+import {Component, HostBinding, Input, OnInit, Optional} from '@angular/core'
 import * as moment from 'moment'
-import {Moment} from 'moment';
+import {DateAdapter} from '../../core/date-adapter'
 
 @Component({
-  selector: 'app-month-navigator',
-  templateUrl: './month-navigator.component.html',
-  styleUrls: ['./month-navigator.component.scss'],
+  selector: 'app-nav-calendar',
+  templateUrl: './calendar.component.html',
+  styleUrls: ['./calendar.component.scss'],
+  // host: {
+  //   'class': 'mat-calendar',
+  // }
 })
-export class MonthNavigatorComponent implements OnInit {
-  @Input() initializeMoment: moment.Moment
 
-  constructor() { }
+export class CalendarComponent<D> implements OnInit {
 
-  ngOnInit(): void {
+  constructor(@Optional() private _dateAdapter: DateAdapter<D>) {
   }
 
-  getNowMoment(): Moment{
-    return moment()
+  @Input()
+  get startAt(): D | null { return this._startAt }
+  set startAt(value: D | null) {
+    this._startAt = this._dateAdapter.getValidDateOrNull(this._dateAdapter.deserialize(value))
+  }
+  @Input() initializeMoment: moment.Moment
+  private _startAt: D | null
+
+  ngOnInit(): void {
   }
 
   onClick(event: any): void {
