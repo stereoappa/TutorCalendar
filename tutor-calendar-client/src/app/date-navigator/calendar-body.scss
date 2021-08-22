@@ -1,0 +1,53 @@
+.row {
+  display: table-row;
+  height: 28px;
+
+  .cell {
+    color: #3c4043;
+    position: relative;
+    display: table-cell;
+    font-size: 10px;
+    font-weight: 500;
+    vertical-align: middle;
+    cursor: pointer;
+    outline: none;
+
+    &:before {
+      position: absolute;
+      height: 24px;
+      left: -50%;
+      right: 50%;
+      z-index: -1;
+      content: "";
+      background-color: white;
+      transition: background-color 100ms linear;
+    }
+  }
+
+  .day-number {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    margin: auto;
+    border-radius: 50%;
+    background-color: white;
+    transition: background-color 100ms linear;
+
+    &:hover {
+      background-color: #f1f3f4;
+    }
+  }
+
+  .cell.active > .day-number {
+    background-color: #1a73e8;
+    color: #fff;
+  }
+
+  .gray-day {
+    color: #70757a;
+  }
+}
+
+
+
+

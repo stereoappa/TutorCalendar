@@ -1,0 +1,7 @@
+<div *ngFor="let weekDays of rows" class="row">
+        <span *ngFor="let day of weekDays" class="cell"
+              [class.active]="day.cssClasses.includes('active')"
+              [class.gray-day]="day.cssClasses.includes('gray-day')">
+          <div class="day-number">{{day.displayValue}}</div>
+        </span>
+</div>

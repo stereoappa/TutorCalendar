@@ -1,8 +1,8 @@
-.nav-calendar {
+.nav-calendar-container {
   padding: 8px 0;
   user-select: none;
 
-  .nav-calendar__body {
+  .nav-calendar {
     position: relative;
     padding: 0 14px 16px 19px;
 
@@ -55,31 +55,7 @@
       transition: background-color 100ms linear;
     }
   }
-
-  .day-number {
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
-    margin: auto;
-    border-radius: 50%;
-    background-color: white;
-    transition: background-color 100ms linear;
-
-    &:hover {
-      background-color: #f1f3f4;
-    }
-  }
-
-  .cell.active > .day-number {
-    background-color: #1a73e8;
-    color: #fff;
-  }
-
-  .gray-day {
-    color: #70757a;
-  }
 }
-
 
 .title {
   flex-grow: 1;
