@@ -2,32 +2,22 @@
   <div class="nav-calendar">
     <div class="selector-row">
       <span class="title">{{_monthLabel | titlecase}}</span>
-      <div (click)="onClick($event)" data-button="prev" class="button mr-6">
+      <div (click)="previousClicked()" data-button="prev" class="button mr-6">
         <i data-button="prev" class="material-icons">navigate_before</i>
       </div>
-      <div (click)="onClick($event)" data-button="next" class="button next-month">
+      <div (click)="nextClicked()" data-button="next" class="button next-month">
         <i data-button="next" class="material-icons">navigate_next</i>
       </div>
     </div>
 
-    <div role="grid" class="table">
-      <div class="row week-header">
-      <span *ngFor="let title of _weekdays"
-            class="weekday-title cell"
-            [attr.text]="title.long"
-            data-tooltip-position="bottom">
-            {{title.narrow | titlecase}}
-         </span>
-      </div>
-      <app-nav-calendar-body
-        [label]="_monthLabel"
-        [rows]="_weeks"
-        [isRange]="_isRange"
-        [startValue]="_rangeStart!"
-        [endValue]="_rangeEnd!"
-        [activeCell]="_dateAdapter.getDate(activeDate) - 1"
-        class="row-group"
-      ></app-nav-calendar-body>
-    </div>
+    <app-nav-calendar-body
+      [label]="_monthLabel"
+      [rows]="_weeks"
+      [weekdays]="_weekdays"
+      [isRange]="_isRange"
+      [startValue]="_rangeStart!"
+      [endValue]="_rangeEnd!"
+      [activeCell]="_dateAdapter.getDate(activeDate) - 1"
+    ></app-nav-calendar-body>
   </div>
 </div>

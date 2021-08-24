@@ -17,44 +17,6 @@
       margin-right: 3px;
     }
   }
-
-  .table {
-    display: table;
-    table-layout: fixed;
-    width: 100%;
-    text-align: center;
-  }
-
-  .row {
-    display: table-row;
-    height: 28px;
-  }
-
-  .row-group {
-    display: table-row-group;
-  }
-
-  .cell {
-    color: #3c4043;
-    position: relative;
-    display: table-cell;
-    font-size: 10px;
-    font-weight: 500;
-    vertical-align: middle;
-    cursor: pointer;
-    outline: none;
-
-    &:before {
-      position: absolute;
-      height: 24px;
-      left: -50%;
-      right: 50%;
-      z-index: -1;
-      content: "";
-      background-color: white;
-      transition: background-color 100ms linear;
-    }
-  }
 }
 
 .title {
@@ -91,10 +53,6 @@
   &:hover {
     background-color: rgba(32, 33, 36, 0.039);
   }
-}
-
-.mr-6 {
-  margin-right: 6px;
 }
 
 .material-icons {

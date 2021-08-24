@@ -1,4 +1,4 @@
-import {AfterContentInit, Component, Inject, Input, Optional} from '@angular/core'
+import {AfterContentInit, ChangeDetectionStrategy, Component, Inject, Input, OnChanges, Optional, SimpleChanges} from '@angular/core'
 import {DateAdapter} from '../../core/date-adapter'
 import {DateRange} from './date-selection-model'
 import {MatCalendarCell} from './calendar-body'
@@ -10,14 +10,17 @@ const DAYS_PER_WEEK = 7
   selector: 'app-nav-calendar',
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
   // host: {
   //   'class': 'mat-calendar',
   // }
 })
 
-export class CalendarComponent<D> implements AfterContentInit {
+export class CalendarComponent<D> implements AfterContentInit, OnChanges {
   @Input()
-  get startAt(): D | null { return this._startAt }
+  get startAt(): D | null {
+    return this._startAt
+  }
   set startAt(value: D | null) {
     this._startAt = this._dateAdapter.getValidDateOrNull(this._dateAdapter.deserialize(value))
   }
@@ -36,9 +39,16 @@ export class CalendarComponent<D> implements AfterContentInit {
   }
   private _selected: DateRange<D> | D | null
 
-  get activeDate(): D { return this._activeDate }
+  @Input()
+  get activeDate(): D {
+    return this._activeDate
+  }
   set activeDate(value: D) {
+    const oldActiveDate = this._activeDate
     this._activeDate = value
+    if (!this._hasSameMonthAndYear(oldActiveDate, this._activeDate)) {
+      this._init()
+    }
   }
   private _activeDate: D
 
@@ -58,7 +68,7 @@ export class CalendarComponent<D> implements AfterContentInit {
 
   _todayDate: number | null
 
-  _weekdays: {long: string, narrow: string}[]
+  _weekdays: { long: string, narrow: string }[]
 
   constructor(@Optional() public _dateAdapter: DateAdapter<D>,
               @Optional() @Inject(NAV_DATE_FORMATS) private _dateFormats: DateFormats) {
@@ -68,6 +78,10 @@ export class CalendarComponent<D> implements AfterContentInit {
   ngAfterContentInit(): void {
     // this._calendarHeaderPortal = new ...
     this._init()
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('ON CHANGE!', changes)
   }
 
   _init(): void {
@@ -112,8 +126,8 @@ export class CalendarComponent<D> implements AfterContentInit {
 
     const firstWeekStart = this._dateAdapter.getStartOfWeek(
       this._dateAdapter.createDate(
-      this._dateAdapter.getYear(this.activeDate),
-      this._dateAdapter.getMonth(this.activeDate), 1))
+        this._dateAdapter.getYear(this.activeDate),
+        this._dateAdapter.getMonth(this.activeDate), 1))
 
     for (let i = 0, cell = 0; i < this._firstWeekOffset + daysInMonth + this._lastWeekOffset; i++, cell++) {
       if (cell === DAYS_PER_WEEK) {
@@ -126,7 +140,7 @@ export class CalendarComponent<D> implements AfterContentInit {
 
       /** Previous month offset cells */
       if (i < this._firstWeekOffset || i > this._lastWeekOffset + daysInMonth) {
-        cellClasses.push('gray-day')
+        cellClasses.push('gray-text')
       }
 
       if (!this._dateAdapter.compareDate(date, this._dateAdapter.today())) {
@@ -140,13 +154,16 @@ export class CalendarComponent<D> implements AfterContentInit {
     }
   }
 
-  onClick(event: any): void {
-    const element = event.target.dataset.button
-    if (element === 'prev') {
-      this._dateAdapter.addCalendarMonths(this.activeDate, -1)
-    }
-    if (element === 'next') {
-      this._dateAdapter.addCalendarMonths(this.activeDate, 1)
-    }
+  previousClicked(): void {
+    this.activeDate = this._dateAdapter.addCalendarMonths(this.activeDate, -1)
+  }
+
+  nextClicked(): void {
+    this.activeDate = this._dateAdapter.addCalendarMonths(this.activeDate, 1)
+  }
+
+  private _hasSameMonthAndYear(d1: D | null, d2: D | null): boolean {
+    return !!(d1 && d2 && this._dateAdapter.getMonth(d1) === this._dateAdapter.getMonth(d2) &&
+      this._dateAdapter.getYear(d1) === this._dateAdapter.getYear(d2))
   }
 }

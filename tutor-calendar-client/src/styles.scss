@@ -19,3 +19,7 @@ html, body, #app, :root{
 
   height: calc(100% - #{$header-height});
 }
+
+.mr-6 {
+  margin-right: 6px;
+}

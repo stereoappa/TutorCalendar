@@ -1,7 +1,18 @@
-<div *ngFor="let weekDays of rows" class="row">
-        <span *ngFor="let day of weekDays" class="cell"
-              [class.active]="day.cssClasses.includes('active')"
-              [class.gray-day]="day.cssClasses.includes('gray-day')">
-          <div class="day-number">{{day.displayValue}}</div>
-        </span>
+<div role="grid" class="table">
+  <div class="row week-header">
+  <span *ngFor="let title of weekdays"
+        class="weekday-title cell"
+        [attr.text]="title.long"
+        data-tooltip-position="bottom">
+        {{title.narrow | titlecase}}
+  </span>
+  </div>
+
+  <div *ngFor="let weekDays of rows" class="row">
+  <span *ngFor="let day of weekDays" class="cell"
+        [class.active]="day.cssClasses.includes('active')"
+        [class.gray-text]="day.cssClasses.includes('gray-text')">
+    <div class="day-title">{{day.displayValue}}</div>
+  </span>
+  </div>
 </div>

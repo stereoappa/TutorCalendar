@@ -18,6 +18,8 @@ export class CalendarBodyComponent  {
 
   @Input() rows: MatCalendarCell[][]
 
+  @Input() weekdays: {long: string, narrow: string}[]
+
   @Input() activeCell = 0
 
   @Input() isRange = false
