@@ -1,29 +1,41 @@
-import {AfterContentInit, ChangeDetectionStrategy, Component, Inject, Input, OnChanges, Optional, SimpleChanges} from '@angular/core'
+import {
+  AfterContentInit,
+  ChangeDetectionStrategy,
+  Component, EventEmitter,
+  Inject,
+  Input,
+  OnChanges,
+  Optional,
+  Output,
+  SimpleChanges
+} from '@angular/core'
 import {DateAdapter} from '../../core/date-adapter'
 import {DateRange} from './date-selection-model'
-import {MatCalendarCell} from './calendar-body'
+import {NavCalendarCell, NavCalendarUserEvent} from './calendar-body'
 import {DateFormats, NAV_DATE_FORMATS} from '../../core/date-formats'
 
 const DAYS_PER_WEEK = 7
 
 @Component({
   selector: 'app-nav-calendar',
-  templateUrl: './calendar.component.html',
-  styleUrls: ['./calendar.component.scss'],
+  templateUrl: './nav-calendar.component.html',
+  styleUrls: ['./nav-calendar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
   // host: {
   //   'class': 'mat-calendar',
   // }
 })
 
-export class CalendarComponent<D> implements AfterContentInit, OnChanges {
+export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
   @Input()
   get startAt(): D | null {
     return this._startAt
   }
+
   set startAt(value: D | null) {
     this._startAt = this._dateAdapter.getValidDateOrNull(this._dateAdapter.deserialize(value))
   }
+
   private _startAt: D | null
 
   @Input()
@@ -36,6 +48,7 @@ export class CalendarComponent<D> implements AfterContentInit, OnChanges {
     } else {
       this._selected = this._dateAdapter.getValidDateOrNull(this._dateAdapter.deserialize(value))
     }
+    this._setRanges(this._selected)
   }
   private _selected: DateRange<D> | D | null
 
@@ -43,6 +56,7 @@ export class CalendarComponent<D> implements AfterContentInit, OnChanges {
   get activeDate(): D {
     return this._activeDate
   }
+
   set activeDate(value: D) {
     const oldActiveDate = this._activeDate
     this._activeDate = value
@@ -50,19 +64,23 @@ export class CalendarComponent<D> implements AfterContentInit, OnChanges {
       this._init()
     }
   }
+
+  @Output() readonly _userSelection: EventEmitter<NavCalendarUserEvent<D | null>> =
+    new EventEmitter<NavCalendarUserEvent<D | null>>()
+
   private _activeDate: D
 
   _monthLabel: string
 
-  _weeks: MatCalendarCell[][]
+  _weeks: NavCalendarCell[][]
 
   _firstWeekOffset: number
 
   _lastWeekOffset: number
 
-  _rangeStart: number | null
+  _rangeStart: D | null
 
-  _rangeEnd: number | null
+  _rangeEnd: D | null
 
   _isRange: boolean
 
@@ -85,7 +103,7 @@ export class CalendarComponent<D> implements AfterContentInit, OnChanges {
   }
 
   _init(): void {
-    // this._setRanges(this.selected)
+    this._setRanges(this.selected)
     this._monthLabel = this._dateFormats.display.monthYearA11yLabel
       ? this._dateAdapter.format(this.activeDate, this._dateFormats.display.monthYearA11yLabel)
       : this._dateAdapter.getMonthNames('long')[this._dateAdapter.getMonth(this.activeDate)]
@@ -150,7 +168,7 @@ export class CalendarComponent<D> implements AfterContentInit, OnChanges {
       const enabled = true
       const cellValue = this._dateAdapter.getDate(date)
 
-      this._weeks[this._weeks.length - 1].push(new MatCalendarCell<D>(cellValue, cellValue.toString(), enabled, cellClasses, date))
+      this._weeks[this._weeks.length - 1].push(new NavCalendarCell<D>(cellValue, cellValue.toString(), enabled, cellClasses, date))
     }
   }
 
@@ -162,8 +180,29 @@ export class CalendarComponent<D> implements AfterContentInit, OnChanges {
     this.activeDate = this._dateAdapter.addCalendarMonths(this.activeDate, 1)
   }
 
+  _dateSelected(event: NavCalendarUserEvent<number>): void {
+    const day = event.value
+    const selectedYear = this._dateAdapter.getYear(this.activeDate)
+    const selectedMonth = this._dateAdapter.getMonth(this.activeDate)
+    const selectedDate = this._dateAdapter.createDate(selectedYear, selectedMonth, day)
+
+    this._userSelection.emit({value: selectedDate, event: event.event})
+  }
+
   private _hasSameMonthAndYear(d1: D | null, d2: D | null): boolean {
     return !!(d1 && d2 && this._dateAdapter.getMonth(d1) === this._dateAdapter.getMonth(d2) &&
       this._dateAdapter.getYear(d1) === this._dateAdapter.getYear(d2))
   }
+
+  private _setRanges(selectedValue: DateRange<D> | D | null): void {
+    if (selectedValue instanceof DateRange) {
+      this._rangeStart = selectedValue.start
+      this._rangeEnd = selectedValue.end
+      this._isRange = true
+    } else {
+      this._rangeStart = this._rangeEnd = selectedValue
+      this._isRange = false
+    }
+  }
 }
+

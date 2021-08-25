@@ -11,7 +11,8 @@
   <div *ngFor="let weekDays of rows" class="row">
   <span *ngFor="let day of weekDays" class="cell"
         [class.active]="day.cssClasses.includes('active')"
-        [class.gray-text]="day.cssClasses.includes('gray-text')">
+        [class.gray-text]="day.cssClasses.includes('gray-text')"
+        (click)="_cellClicked(day, $event)">
     <div class="day-title">{{day.displayValue}}</div>
   </span>
   </div>

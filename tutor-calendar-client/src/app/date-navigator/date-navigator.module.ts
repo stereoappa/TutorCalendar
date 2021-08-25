@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core'
-import {CalendarComponent} from './calendar.component'
+import {NavCalendarComponent} from './nav-calendar.component'
 import {CommonModule} from '@angular/common'
 import {DateAdapter, NAV_DATE_LOCALE} from '../../core/date-adapter'
 import {MomentDateAdapter} from '../../core/moment-adapter/moment-date-adapter'
@@ -9,11 +9,11 @@ import {NAV_MOMENT_DATE_FORMATS} from '../../core/moment-adapter/moment-date-for
 
 @NgModule({
   declarations: [
-    CalendarComponent,
+    NavCalendarComponent,
     CalendarBodyComponent],
   imports: [CommonModule],
   exports: [
-    CalendarComponent,
+    NavCalendarComponent,
     CalendarBodyComponent
   ],
   providers: [

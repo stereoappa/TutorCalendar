@@ -18,6 +18,7 @@
       [startValue]="_rangeStart!"
       [endValue]="_rangeEnd!"
       [activeCell]="_dateAdapter.getDate(activeDate) - 1"
+      (selectedValueChange)="_dateSelected($event)"
     ></app-nav-calendar-body>
   </div>
 </div>
