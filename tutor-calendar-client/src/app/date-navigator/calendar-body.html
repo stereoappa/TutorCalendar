@@ -8,10 +8,14 @@
   </span>
   </div>
 
-  <div *ngFor="let weekDays of rows" class="row">
-  <span *ngFor="let day of weekDays" class="cell"
-        [class.active]="day.cssClasses.includes('active')"
+  <div *ngFor="let weekDays of rows; let rowIndex = index" class="row">
+  <span *ngFor="let day of weekDays; let colIndex = index" class="cell"
+        [class.active]="_isActiveCell(rowIndex, colIndex)"
+        [class.today]="day.cssClasses.includes('today')"
         [class.gray-text]="day.cssClasses.includes('gray-text')"
+        [class.range-start]="_isRangeStart(day.compareValue)"
+        [class.range-end]="_isRangeEnd(day.compareValue)"
+        [class.in-range]="_isInRange(day.compareValue)"
         (click)="_cellClicked(day, $event)">
     <div class="day-title">{{day.displayValue}}</div>
   </span>

@@ -28,17 +28,6 @@ const DAYS_PER_WEEK = 7
 
 export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
   @Input()
-  get startAt(): D | null {
-    return this._startAt
-  }
-
-  set startAt(value: D | null) {
-    this._startAt = this._dateAdapter.getValidDateOrNull(this._dateAdapter.deserialize(value))
-  }
-
-  private _startAt: D | null
-
-  @Input()
   get selected(): DateRange<D> | D | null {
     return this._selected
   }
@@ -48,7 +37,6 @@ export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
     } else {
       this._selected = this._dateAdapter.getValidDateOrNull(this._dateAdapter.deserialize(value))
     }
-    this._setRanges(this._selected)
   }
   private _selected: DateRange<D> | D | null
 
@@ -78,9 +66,9 @@ export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
 
   _lastWeekOffset: number
 
-  _rangeStart: D | null
+  _rangeStart: number | null
 
-  _rangeEnd: D | null
+  _rangeEnd: number | null
 
   _isRange: boolean
 
@@ -90,11 +78,11 @@ export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
 
   constructor(@Optional() public _dateAdapter: DateAdapter<D>,
               @Optional() @Inject(NAV_DATE_FORMATS) private _dateFormats: DateFormats) {
-    this.activeDate = this._dateAdapter.today()
   }
 
   ngAfterContentInit(): void {
     // this._calendarHeaderPortal = new ...
+    this.activeDate = this._dateAdapter.today()
     this._init()
   }
 
@@ -162,13 +150,19 @@ export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
       }
 
       if (!this._dateAdapter.compareDate(date, this._dateAdapter.today())) {
-        cellClasses.push('active')
+        cellClasses.push('today')
       }
 
       const enabled = true
       const cellValue = this._dateAdapter.getDate(date)
 
-      this._weeks[this._weeks.length - 1].push(new NavCalendarCell<D>(cellValue, cellValue.toString(), enabled, cellClasses, date))
+      this._weeks[this._weeks.length - 1].push(new NavCalendarCell<D>(
+        cellValue,
+        this._getCellCompareValue(date),
+        cellValue.toString(),
+        enabled,
+        cellClasses,
+        date))
     }
   }
 
@@ -186,6 +180,7 @@ export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
     const selectedMonth = this._dateAdapter.getMonth(this.activeDate)
     const selectedDate = this._dateAdapter.createDate(selectedYear, selectedMonth, day)
 
+    //this.selected = selectedDate
     this._userSelection.emit({value: selectedDate, event: event.event})
   }
 
@@ -196,13 +191,24 @@ export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
 
   private _setRanges(selectedValue: DateRange<D> | D | null): void {
     if (selectedValue instanceof DateRange) {
-      this._rangeStart = selectedValue.start
-      this._rangeEnd = selectedValue.end
+      this._rangeStart = this._getCellCompareValue(selectedValue.start)
+      this._rangeEnd = this._getCellCompareValue(selectedValue.end)
       this._isRange = true
     } else {
-      this._rangeStart = this._rangeEnd = selectedValue
+      this._rangeStart = this._rangeEnd = this._getCellCompareValue(selectedValue)
       this._isRange = false
     }
+  }
+
+  private _getCellCompareValue(date: D | null): number | null {
+    if (date) {
+      const year = this._dateAdapter.getYear(date)
+      const month = this._dateAdapter.getMonth(date)
+      const day = this._dateAdapter.getDate(date)
+      return new Date(year, month, day).getTime()
+    }
+
+    return null
   }
 }
 

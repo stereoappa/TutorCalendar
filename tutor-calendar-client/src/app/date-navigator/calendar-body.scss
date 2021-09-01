@@ -35,7 +35,27 @@
     }
 
     .cell.active > .day-title {
+      background-color: #d2e3fc;
+      color: #185abc;
+    }
+
+    .cell.today > .day-title {
       background-color: #1a73e8;
+      color: #fff;
+    }
+
+    .cell.range-start > .day-title {
+      background-color: #e81a8b;
+      color: #fff;
+    }
+
+    .cell.range-end > .day-title {
+      background-color: #e81a8b;
+      color: #fff;
+    }
+
+    .cell.in-range > .day-title {
+      background: rgba(40, 232, 226, 0.5);
       color: #fff;
     }
 

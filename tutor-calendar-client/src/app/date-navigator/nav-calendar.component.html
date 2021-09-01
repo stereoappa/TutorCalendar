@@ -14,9 +14,10 @@
       [label]="_monthLabel"
       [rows]="_weeks"
       [weekdays]="_weekdays"
-      [isRange]="_isRange"
+      [todayValue]="_todayDate!"
       [startValue]="_rangeStart!"
       [endValue]="_rangeEnd!"
+      [isRange]="_isRange"
       [activeCell]="_dateAdapter.getDate(activeDate) - 1"
       (selectedValueChange)="_dateSelected($event)"
     ></app-nav-calendar-body>
