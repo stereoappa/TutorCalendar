@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, ElementRef} from '@angular/core'
+import {Component, Input, Output, EventEmitter, ElementRef, NgZone, OnDestroy} from '@angular/core'
 
 export class NavCalendarCell<D = any> {
   constructor(public value: number,
@@ -19,7 +19,7 @@ export interface NavCalendarUserEvent<D> {
   templateUrl: 'calendar-body.html',
   styleUrls: ['calendar-body.scss']
 })
-export class CalendarBodyComponent  {
+export class CalendarBodyComponent implements OnDestroy  {
   @Input() label: string
 
   @Input() rows: NavCalendarCell[][]
@@ -27,6 +27,10 @@ export class CalendarBodyComponent  {
   @Input() weekdays: {long: string, narrow: string}[]
 
   @Input() activeCell = 0
+
+  @Input() previewStart: number | null = null
+
+  @Input() previewEnd: number | null = null
 
   @Input() isRange = false
 
@@ -36,16 +40,73 @@ export class CalendarBodyComponent  {
 
   @Input() todayValue: number
 
-  @Output() readonly selectedValueChange = new EventEmitter<NavCalendarUserEvent<number> | null>()
+  @Output() readonly previewChange =
+    new EventEmitter<NavCalendarUserEvent<NavCalendarCell | null>>()
 
-  constructor(private _elementRef: ElementRef<HTMLElement>) {
-    const element = _elementRef.nativeElement
+  @Output() readonly selectedValueChange =
+    new EventEmitter<NavCalendarUserEvent<number> | null>()
+
+  constructor(private _elementRef: ElementRef<HTMLElement>, private _ngZone: NgZone) {
+    _ngZone.runOutsideAngular(() => {
+      const element = _elementRef.nativeElement
+      element.addEventListener('mousedown', this._cellMouseDown, true)
+      element.addEventListener('mouseup', this._cellMouseUp, true)
+      element.addEventListener('mouseleave', this._cellMouseLeave, true)
+    })
+  }
+
+  private _cellMouseDown = (event: Event) => {
+    const cell = this._getCellFromElement(event.target as HTMLElement)
+    this.previewStart = cell.compareValue
+    console.log(cell.rawValue)
+  }
+
+  private _cellMouseUp = (event: Event) => {
+    const cell = this._getCellFromElement(event.target as HTMLElement)
+    this.previewEnd = cell.compareValue
+    console.log(cell.rawValue)
+  }
+
+  private _cellMouseLeave = (event: Event) => {
+    if (this.previewEnd !== null) {
+      // Only reset the preview end value when leaving cells. This looks better, because
+      // we have a gap between the cells and the rows and we don't want to remove the
+      // range just for it to show up again when the user moves a few pixels to the side.
+      if (event.target && isTableCell(event.target as HTMLElement)) {
+        this._ngZone.run(() => this.previewChange.emit({value: null, event}))
+      }
+    }
   }
 
   _cellClicked(cell: NavCalendarCell, event: MouseEvent): void {
-    if (cell.enabled) {
-      this.selectedValueChange.emit({value: cell.value, event})
+    if (cell.enabled && !this.isRange) {
+      this.selectedValueChange.emit({value: cell.compareValue, event})
     }
+  }
+
+  private _getCellFromElement(element: HTMLElement): NavCalendarCell | null {
+    let cell: HTMLElement | undefined
+
+    if (isTableCell(element)) {
+      cell = element
+    } else if (isTableCell(element.parentNode)) {
+      cell = element.parentNode as HTMLElement
+    }
+
+    if (cell) {
+      const row = cell.getAttribute('data-mat-row')
+      const col = cell.getAttribute('data-mat-col')
+
+      if (row && col) {
+        return this.rows[parseInt(row)][parseInt(col)]
+      }
+    }
+
+    return null
+  }
+
+  _isSelected(value: number): boolean {
+    return this.startValue === value || this.endValue === value
   }
 
   _isRangeStart(value: number): boolean {
@@ -64,6 +125,13 @@ export class CalendarBodyComponent  {
     const cellNumber = rowIndex * 7 + colIndex
     return cellNumber === this.activeCell
   }
+
+  ngOnDestroy(): void {
+    const element = this._elementRef.nativeElement
+    element.removeEventListener('mousedown', this._cellMouseDown, true)
+    element.removeEventListener('mouseup', this._cellMouseUp, true)
+    element.removeEventListener('mouseleave', this._cellMouseLeave, true)
+  }
 }
 
 function isStart(value: number, start: number | null, end: number | null): boolean {
@@ -81,3 +149,8 @@ function isInRange(value: number,
   return rangeEnabled && start !== null && end !== null && start !== end &&
     value >= start && value <= end
 }
+
+function isTableCell(node: Node): node is HTMLDivElement {
+  return node.nodeName === 'SPAN'
+}
+

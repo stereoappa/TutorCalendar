@@ -9,14 +9,17 @@
   </div>
 
   <div *ngFor="let weekDays of rows; let rowIndex = index" class="row">
-  <span *ngFor="let day of weekDays; let colIndex = index" class="cell"
+  <span *ngFor="let day of weekDays; let colIndex = index" class="cell" data-cell
+        [attr.data-mat-row]="rowIndex"
+        [attr.data-mat-col]="colIndex"
         [class.active]="_isActiveCell(rowIndex, colIndex)"
+        [class.selected]="_isSelected(day.compareValue)"
         [class.today]="day.cssClasses.includes('today')"
         [class.gray-text]="day.cssClasses.includes('gray-text')"
         [class.range-start]="_isRangeStart(day.compareValue)"
         [class.range-end]="_isRangeEnd(day.compareValue)"
-        [class.in-range]="_isInRange(day.compareValue)"
-        (click)="_cellClicked(day, $event)">
+        [class.in-range]="_isInRange(day.compareValue)" >
+<!--        (click)="_cellClicked(day, $event)"-->
     <div class="day-title">{{day.displayValue}}</div>
   </span>
   </div>

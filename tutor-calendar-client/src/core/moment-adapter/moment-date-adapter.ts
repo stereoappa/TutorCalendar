@@ -1,6 +1,7 @@
 import {DateAdapter, NAV_DATE_LOCALE} from '../date-adapter'
 import * as moment from 'moment'
 import {Inject, Injectable, Optional} from '@angular/core'
+import {NAV_DATE_FORMATS} from '../date-formats'
 
 @Injectable()
 export class MomentDateAdapter extends DateAdapter<moment.Moment> {
@@ -134,7 +135,7 @@ export class MomentDateAdapter extends DateAdapter<moment.Moment> {
     return this.clone(date).isValid()
   }
 
-  parse(value: any, parseFormat: any): moment.Moment | null {
+  parse(value: any, parseFormat: any = NAV_DATE_FORMATS): moment.Moment | null {
     if (value && typeof value === 'string') {
       return moment(value, parseFormat, this.locale)
     }

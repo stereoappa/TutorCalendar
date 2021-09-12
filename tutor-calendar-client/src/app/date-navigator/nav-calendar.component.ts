@@ -21,12 +21,16 @@ const DAYS_PER_WEEK = 7
   templateUrl: './nav-calendar.component.html',
   styleUrls: ['./nav-calendar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
-  // host: {
-  //   'class': 'mat-calendar',
-  // }
 })
 
 export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
+  @Input()
+  get startAt(): D | null { return this._startAt }
+  set startAt(value: D | null) {
+    this._startAt = this._dateAdapter.getValidDateOrNull(this._dateAdapter.deserialize(value))
+  }
+  private _startAt: D | null
+
   @Input()
   get selected(): DateRange<D> | D | null {
     return this._selected
@@ -37,6 +41,7 @@ export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
     } else {
       this._selected = this._dateAdapter.getValidDateOrNull(this._dateAdapter.deserialize(value))
     }
+    this._setRanges(this.selected)
   }
   private _selected: DateRange<D> | D | null
 
@@ -44,7 +49,6 @@ export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
   get activeDate(): D {
     return this._activeDate
   }
-
   set activeDate(value: D) {
     const oldActiveDate = this._activeDate
     this._activeDate = value
@@ -81,13 +85,12 @@ export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
   }
 
   ngAfterContentInit(): void {
-    // this._calendarHeaderPortal = new ...
-    this.activeDate = this._dateAdapter.today()
+    this.activeDate = this.startAt || this._dateAdapter.today()
     this._init()
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('ON CHANGE!', changes)
+    console.log('nav-calendar - ON CHANGE!', changes)
   }
 
   _init(): void {
@@ -175,12 +178,11 @@ export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
   }
 
   _dateSelected(event: NavCalendarUserEvent<number>): void {
-    const day = event.value
-    const selectedYear = this._dateAdapter.getYear(this.activeDate)
-    const selectedMonth = this._dateAdapter.getMonth(this.activeDate)
-    const selectedDate = this._dateAdapter.createDate(selectedYear, selectedMonth, day)
+    const selectedDate = this._dateAdapter.parse(event.value)
+    // const selectedYear = this._dateAdapter.getYear(this.activeDate)
+    // const selectedMonth = this._dateAdapter.getMonth(this.activeDate)
+    // const selectedDate = this._dateAdapter.createDate(selectedYear, selectedMonth, day)
 
-    //this.selected = selectedDate
     this._userSelection.emit({value: selectedDate, event: event.event})
   }
 

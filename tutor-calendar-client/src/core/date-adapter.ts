@@ -26,7 +26,7 @@ export abstract class DateAdapter<D, L = any> {
 
   abstract addCalendarMonths(date: D, months: number): D
 
-  abstract parse(value: any, parseFormat: any): D | null
+  abstract parse(value: any, parseFormat?: any): D | null
 
   abstract today(): D
 

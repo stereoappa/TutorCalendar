@@ -3,6 +3,7 @@
 </div>
 
 <app-nav-calendar
+  [startAt] = "_getStartAt()"
   [selected]="_getSelected()"
   (_userSelection)="_handleUserSelection($event)"
 ></app-nav-calendar>
