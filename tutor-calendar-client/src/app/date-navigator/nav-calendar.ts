@@ -11,18 +11,18 @@ import {
 } from '@angular/core'
 import {DateAdapter} from '../../core/date-adapter'
 import {DateRange} from './date-selection-model'
-import {NavCalendarCell, NavCalendarUserEvent} from './calendar-body'
+import {NavCalendarCell, NavCalendarUserEvent} from './nav-calendar-body'
 import {DateFormats, NAV_DATE_FORMATS} from '../../core/date-formats'
 
 const DAYS_PER_WEEK = 7
 
 @Component({
   selector: 'app-nav-calendar',
-  templateUrl: './nav-calendar.component.html',
-  styleUrls: ['./nav-calendar.component.scss'],
+  templateUrl: './nav-calendar.html',
+  styleUrls: ['./nav-calendar.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
+export class NavCalendar<D> implements AfterContentInit, OnChanges {
   @Input()
   get startAt(): D | null { return this._startAt }
   set startAt(value: D | null) {

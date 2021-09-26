@@ -1,8 +1,7 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core'
-import {NavCalendarComponent} from '../date-navigator/nav-calendar.component'
 import {DateRange} from '../date-navigator/date-selection-model'
 import {DateAdapter} from '../../core/date-adapter'
-import {NavCalendarUserEvent} from '../date-navigator/calendar-body'
+import {NavCalendarUserEvent} from '../date-navigator/nav-calendar-body'
 
 @Component({
   selector: 'app-sidebar',

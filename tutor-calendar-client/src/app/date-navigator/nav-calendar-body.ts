@@ -17,8 +17,8 @@ export interface NavCalendarUserEvent<D> {
 
 @Component({
   selector: 'app-nav-calendar-body',
-  templateUrl: 'calendar-body.html',
-  styleUrls: ['calendar-body.scss']
+  templateUrl: 'nav-calendar-body.html',
+  styleUrls: ['nav-calendar-body.scss']
 })
 export class CalendarBodyComponent implements OnDestroy  {
   @Input() label: string
