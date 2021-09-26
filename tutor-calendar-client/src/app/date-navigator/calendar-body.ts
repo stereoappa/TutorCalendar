@@ -12,6 +12,7 @@ export class NavCalendarCell<D = any> {
 export interface NavCalendarUserEvent<D> {
   value: D
   event: Event
+  selectionComplete?: boolean
 }
 
 @Component({
@@ -51,29 +52,41 @@ export class CalendarBodyComponent implements OnDestroy  {
       const element = _elementRef.nativeElement
       element.addEventListener('mousedown', this._cellMouseDown, true)
       element.addEventListener('mouseup', this._cellMouseUp, true)
-      element.addEventListener('mouseleave', this._cellMouseLeave, true)
+      element.addEventListener('mouseover', this._cellMouseLeave, true)
     })
   }
 
   private _cellMouseDown = (event: Event) => {
     const cell = this._getCellFromElement(event.target as HTMLElement)
     this.previewStart = cell.compareValue
-    console.log(cell.rawValue)
+    if (cell) {
+      this._ngZone.run(() => this.previewChange.emit({
+        value: cell,
+        event,
+        selectionComplete: false}))
+    }
   }
 
   private _cellMouseUp = (event: Event) => {
     const cell = this._getCellFromElement(event.target as HTMLElement)
-    this.previewEnd = cell.compareValue
-    console.log(cell.rawValue)
+
+    if (cell.compareValue != this.previewStart) {
+      this._ngZone.run(() => this.previewChange.emit({value: cell, event, selectionComplete: true}))
+    } else {
+      this._ngZone.run(() => this.selectedValueChange.emit({value: cell.compareValue, event}))
+    }
   }
 
   private _cellMouseLeave = (event: Event) => {
-    if (this.previewEnd !== null) {
-      // Only reset the preview end value when leaving cells. This looks better, because
-      // we have a gap between the cells and the rows and we don't want to remove the
-      // range just for it to show up again when the user moves a few pixels to the side.
-      if (event.target && isTableCell(event.target as HTMLElement)) {
-        this._ngZone.run(() => this.previewChange.emit({value: null, event}))
+    if (this.previewStart && isTableCell(event.target as HTMLElement)) {
+      const cell = this._getCellFromElement(event.target as HTMLElement)
+      if (cell) {
+        console.log(cell.value)
+        this._ngZone.run(
+          () => this.previewChange.emit({
+          value: cell,
+          event,
+          selectionComplete: false}))
       }
     }
   }
@@ -150,7 +163,7 @@ function isInRange(value: number,
     value >= start && value <= end
 }
 
-function isTableCell(node: Node): node is HTMLDivElement {
-  return node.nodeName === 'SPAN'
+function isTableCell(node: Node) {
+  return (node as HTMLElement).getAttribute('role') === 'cell'
 }
 

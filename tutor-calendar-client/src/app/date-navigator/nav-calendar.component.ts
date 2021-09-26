@@ -22,7 +22,6 @@ const DAYS_PER_WEEK = 7
   styleUrls: ['./nav-calendar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-
 export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
   @Input()
   get startAt(): D | null { return this._startAt }
@@ -57,8 +56,8 @@ export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
     }
   }
 
-  @Output() readonly _userSelection: EventEmitter<NavCalendarUserEvent<D | null>> =
-    new EventEmitter<NavCalendarUserEvent<D | null>>()
+  @Output() readonly _userSelection: EventEmitter<NavCalendarUserEvent<D | DateRange<D> | null>> =
+    new EventEmitter<NavCalendarUserEvent<D | DateRange<D> |  null>>()
 
   private _activeDate: D
 
@@ -73,6 +72,10 @@ export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
   _rangeStart: number | null
 
   _rangeEnd: number | null
+
+  _previewStart: number | null
+
+  _previewEnd: number | null
 
   _isRange: boolean
 
@@ -90,7 +93,7 @@ export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('nav-calendar - ON CHANGE!', changes)
+    console.log('[nav-calendar] - ON CHANGE!', changes)
   }
 
   _init(): void {
@@ -103,10 +106,7 @@ export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
       this._dateAdapter.getYear(this.activeDate),
       this._dateAdapter.getMonth(this.activeDate), 1)
 
-    const firstOfNextMonth = this._dateAdapter.createDate(
-      this._dateAdapter.getYear(this.activeDate),
-      this._dateAdapter.getMonth(this.activeDate) + 1,
-      1)
+    const firstOfNextMonth = this._dateAdapter.addCalendarMonths(firstOfMonth, 1)
 
     this._firstWeekOffset = (DAYS_PER_WEEK + this._dateAdapter.getDayOfWeek(firstOfMonth) -
       this._dateAdapter.getFirstDayOfWeek()) % DAYS_PER_WEEK
@@ -179,11 +179,44 @@ export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
 
   _dateSelected(event: NavCalendarUserEvent<number>): void {
     const selectedDate = this._dateAdapter.parse(event.value)
-    // const selectedYear = this._dateAdapter.getYear(this.activeDate)
-    // const selectedMonth = this._dateAdapter.getMonth(this.activeDate)
-    // const selectedDate = this._dateAdapter.createDate(selectedYear, selectedMonth, day)
 
+    this._previewStart = this._previewEnd = null
     this._userSelection.emit({value: selectedDate, event: event.event})
+  }
+
+  _previewChanged(event: NavCalendarUserEvent<NavCalendarCell<D> | null>) {
+    if (!event.selectionComplete) {
+      if (!this._previewStart) {
+        this._previewStart = this._getCellCompareValue(event.value.rawValue)
+        return
+      }
+
+      this._previewEnd = this._getCellCompareValue(event.value.rawValue)
+      this._userSelection.emit({value: this._createPreview(), event: null, selectionComplete: false})
+      return
+    }
+
+    this._previewEnd = this._getCellCompareValue(event.value.rawValue)
+    this._userSelection.emit({value: this._createPreview(), event: null, selectionComplete: false})
+
+    this._previewStart = this._previewEnd = null
+  }
+
+  _createPreview(): DateRange<D> {
+    let start: number | null = null
+    let end: number | null = null
+
+    if (this._previewStart < this._previewEnd) {
+      start = this._previewStart
+      end = this._previewEnd
+    }
+
+    if (this._previewStart > this._previewEnd) {
+      start = this._previewEnd
+      end = this._previewStart
+    }
+
+    return new DateRange<D>(this._dateAdapter.parse(start), this._dateAdapter.parse(end))
   }
 
   private _hasSameMonthAndYear(d1: D | null, d2: D | null): boolean {

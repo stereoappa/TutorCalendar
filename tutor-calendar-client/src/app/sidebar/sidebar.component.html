@@ -4,7 +4,6 @@
 
 <app-nav-calendar
   [startAt] = "_getStartAt()"
-  [selected]="_getSelected()"
+  [selected]="selected"
   (_userSelection)="_handleUserSelection($event)"
 ></app-nav-calendar>
-
