@@ -148,7 +148,7 @@ export class NavCalendarComponent<D> implements AfterContentInit, OnChanges {
       const cellClasses = []
 
       /** Previous month offset cells */
-      if (i < this._firstWeekOffset || i > this._lastWeekOffset + daysInMonth) {
+      if (i < this._firstWeekOffset || i >= this._firstWeekOffset + daysInMonth) {
         cellClasses.push('gray-text')
       }
 

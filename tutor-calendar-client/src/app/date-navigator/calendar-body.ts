@@ -119,7 +119,7 @@ export class CalendarBodyComponent implements OnDestroy  {
   }
 
   _isSelected(value: number): boolean {
-    return this.startValue === value || this.endValue === value
+    return !this.isRange && (this.startValue === value || this.endValue === value)
   }
 
   _isRangeStart(value: number): boolean {

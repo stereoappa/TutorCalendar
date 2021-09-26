@@ -1,3 +1,5 @@
+@import 'variables';
+
 :host {
   display: table-row-group
 }
@@ -13,7 +15,7 @@
     height: 28px;
 
     .cell {
-      color: #3c4043;
+      color: $default-color;
       position: relative;
       display: table-cell;
       font-size: 10px;
@@ -21,6 +23,36 @@
       vertical-align: middle;
       cursor: pointer;
       outline: none;
+
+      &.today > .day-title {
+        background-color: #1a73e8;
+        color: #fff;
+      }
+
+      &.today > .day-title:hover {
+        background-color: #1967d2;
+      }
+
+      &.in-range:not(.today) > .day-title:hover {
+        background-color: #aecbfa;
+      }
+
+      &:not(.today).in-range > .day-title {
+        background-color: #d2e3fc;
+        color: #185abc;
+      }
+
+      &.selected:not(.today) > .day-title {
+        background-color: #d2e3fc;
+        color: #185abc;
+      }
+
+      &:not(:first-child).in-range:not(.range-start) {
+        &:before {
+          background: #d2e3fc;
+          color: #fff;
+        }
+      }
 
       &:before {
         position: absolute;
@@ -32,31 +64,6 @@
         background-color: white;
         transition: background-color 100ms linear;
       }
-    }
-
-    .cell.selected > .day-title {
-      background-color: #d2e3fc;
-      color: #185abc;
-    }
-
-    .cell.today > .day-title {
-      background-color: #1a73e8;
-      color: #fff;
-    }
-
-    .cell.range-start > .day-title {
-      background-color: #e81a8b;
-      color: #fff;
-    }
-
-    .cell.range-end > .day-title {
-      background-color: #e81a8b;
-      color: #fff;
-    }
-
-    .cell.in-range > .day-title {
-      background: rgba(40, 232, 226, 0.5);
-      color: #fff;
     }
 
     .day-title {
@@ -72,12 +79,14 @@
         background-color: #f1f3f4;
       }
     }
+
+    .gray-text {
+      color: $default-gray-color;
+    }
   }
 }
 
-.gray-text {
-  color: #70757a;
-}
+
 
 
 
