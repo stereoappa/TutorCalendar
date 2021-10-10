@@ -1,15 +1,35 @@
-<div class="row" *ngFor="let day of coverageDays">
-  <div class="table-title">
-    <div class="title-grid-serif"></div>
-    <div class="data weekday">{{day.day}}</div>
-    <div class="data number-day">{{day.title}}</div>
+<div class="timetable">
+
+  <div class="row">
+    <div class="timeline"></div>
+    <div class="line-delta"></div>
+    <div class="table-title" *ngFor="let day of daysCoverage">
+      <div class="title-grid-serif"></div>
+      <div class="data weekday">{{day.weekday.narrow | uppercase}}</div>
+      <div class="data number-day">{{day.title}}</div>
+    </div>
   </div>
-</div>
-<div class="row">
-  <div class="table-container">
-<!--    <div class="timeline" data-role="timeline">${timelineHtml}</div>-->
-<!--    <div class="grid">${grid}</div>-->
-    <div class="vertical-grid-line line-delta"></div>
-<!--    <div class="days">${week}</div>-->
+
+  <div class="row">
+    <div class="table-container">
+      <div class="timeline" data-role="timeline">
+        <div class="time-point" data-time-point="${timeTitle}" *ngFor="let point of _timeline">
+          {{point.time}}
+        </div>
+      </div>
+
+      <div class="grid">
+        <div role="row" *ngFor="let point of _timeline"></div>
+      </div>
+
+      <div class="vertical-grid-line line-delta"></div>
+
+      <div class="days" *ngFor="let day of daysCoverage">
+        <div class="day">
+          <div class="layout"></div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>

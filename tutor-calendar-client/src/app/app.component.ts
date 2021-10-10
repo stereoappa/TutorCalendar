@@ -11,8 +11,4 @@ export class AppComponent<D> {
 
   constructor(private _dateAdapter: DateAdapter<D>) {
   }
-
-  handleSelectionChanged(event: any) {
-    console.log(event)
-  }
 }

@@ -12,7 +12,7 @@ export function NAV_DATE_LOCALE_FACTORY(): {} {
 export abstract class DateAdapter<D, L = any> {
   protected locale: L
 
-  abstract createDate(year: number, month: number, date: number): D
+  abstract createDate(year: number, month: number, date: number, hour?: number, minute?: number, second?: number): D
 
   abstract clone(date: D): D
 
@@ -26,7 +26,11 @@ export abstract class DateAdapter<D, L = any> {
 
   abstract addCalendarMonths(date: D, months: number): D
 
+  abstract addCalendarTime(date: D, times: number, type: 'hours' | 'minutes' | 'seconds'): D
+
   abstract parse(value: any, parseFormat?: any): D | null
+
+  abstract toArray(startDate: D, endDate: D): Array<D> | null
 
   abstract today(): D
 
@@ -35,6 +39,10 @@ export abstract class DateAdapter<D, L = any> {
   abstract getYear(date: D): number
 
   abstract getMonth(date: D): number
+
+  abstract getHour(date: D): number
+
+  abstract getMinute(date: D): number
 
   abstract format(date: D, displayFormat: string): string
 

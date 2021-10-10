@@ -60,11 +60,15 @@ export class MomentDateAdapter extends DateAdapter<moment.Moment> {
     return this.clone(date).add({months})
   }
 
+  addCalendarTime(date: moment.Moment, times: number, type: 'hours' | 'minutes' | 'seconds'): moment.Moment {
+    return this.clone(date).add(times, type)
+  }
+
   clone(date: moment.Moment): moment.Moment {
     return date.clone().locale(this.locale)
   }
 
-  createDate(year: number, month: number, date: number): moment.Moment {
+  createDate(year: number, month: number, date: number, hour: number = 0, minute: number = 0, second: number = 0): moment.Moment {
     if (month < 0 || month > 11) {
       throw Error(`Invalid month index "${month}". Month index has to be between 0 and 11.`)
     }
@@ -73,11 +77,19 @@ export class MomentDateAdapter extends DateAdapter<moment.Moment> {
       throw Error(`Invalid date "${date}". Date has to be greater than 0.`)
     }
 
-    return moment({year, month, date}).locale(this.locale)
+    return moment({year, month, date, hour, minute, second}).locale(this.locale)
   }
 
   getDate(date: moment.Moment): number {
     return this.clone(date).date()
+  }
+
+  getHour(date: moment.Moment): number {
+    return this.clone(date).hour()
+  }
+
+  getMinute(date: moment.Moment): number {
+    return this.clone(date).minute()
   }
 
   getDayOfWeek(date: moment.Moment): number {
@@ -140,6 +152,15 @@ export class MomentDateAdapter extends DateAdapter<moment.Moment> {
       return moment(value, parseFormat, this.locale)
     }
     return value ? moment(value).locale(this.locale) : null
+  }
+
+  toArray(startDate: moment.Moment, endDate: moment.Moment): Array<moment.Moment> | null {
+    const array = []
+    while (startDate <= endDate) {
+      array.push(this.clone(startDate))
+      startDate = this.addCalendarDays(startDate, 1)
+    }
+    return array
   }
 
   today(): moment.Moment {

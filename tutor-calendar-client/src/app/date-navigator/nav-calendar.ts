@@ -175,7 +175,6 @@ export class NavCalendar<D> implements AfterContentInit, OnChanges {
 
   _dateSelected(event: NavCalendarUserEvent<number>): void {
     const selectedDate = this._dateAdapter.parse(event.value)
-
     this._previewStart = this._previewEnd = null
 
     this._model.updateSelection(selectedDate, this)
