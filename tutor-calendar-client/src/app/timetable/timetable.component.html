@@ -1,1 +1,15 @@
-<p>timetable works!</p>
+<div class="row" *ngFor="let day of coverageDays">
+  <div class="table-title">
+    <div class="title-grid-serif"></div>
+    <div class="data weekday">{{day.day}}</div>
+    <div class="data number-day">{{day.title}}</div>
+  </div>
+</div>
+<div class="row">
+  <div class="table-container">
+<!--    <div class="timeline" data-role="timeline">${timelineHtml}</div>-->
+<!--    <div class="grid">${grid}</div>-->
+    <div class="vertical-grid-line line-delta"></div>
+<!--    <div class="days">${week}</div>-->
+  </div>
+</div>

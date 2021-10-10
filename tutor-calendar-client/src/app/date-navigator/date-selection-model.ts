@@ -1,32 +1,57 @@
+import {FactoryProvider, Injectable, Optional, SkipSelf } from '@angular/core'
+import {DateAdapter} from '../../core/date-adapter'
+import {Observable, Subject} from 'rxjs'
+
 export class DateRange<D> {
   constructor(
     readonly start: D | null,
     readonly end: D | null) {}
 }
 
-export function selectionFinished<D>(date: D, currentRange: DateRange<D>): DateRange<D> {
-  let {start, end} = currentRange
+export interface DateSelectionModelChange<S> {
+  /** New value for the selection. */
+  selection: S
 
-  if (start == null) {
-    start = date
-  } else if (end == null && date && this._dateAdapter.compareDate(date, start) >= 0) {
-    end = date
-  } else {
-    start = date
-    end = null
-  }
+  /** Object that triggered the change. */
+  source: unknown
 
-  return new DateRange<D>(start, end)
+  /** Previous value */
+  oldValue?: S
 }
 
-export function createPreview<D>(activeDate: D | null, currentRange: DateRange<D>): DateRange<D> {
-  let start: D | null = null
-  let end: D | null = null
+@Injectable({providedIn: 'root'})
+export class NavDateSelectionModel<D> {
+  private readonly _selectionChanged = new Subject<DateSelectionModelChange<D | DateRange<D>>>()
 
-  if (currentRange.start && !currentRange.end && activeDate) {
-    start = currentRange.start
-    end = activeDate
+  selectionChanged: Observable<DateSelectionModelChange<D | DateRange<D>>> = this._selectionChanged
+
+   constructor(
+     readonly selection: D,
+     private _adapter: DateAdapter<D>) {
+     this.selection = selection
+   }
+
+  updateSelection(value: D | DateRange<D>, source: unknown) {
+    const oldValue = (this as {selection: D | DateRange<D>}).selection;
+    (this as {selection: D | DateRange<D>}).selection = value
+    this._selectionChanged.next({selection: value, source, oldValue})
   }
 
-  return new DateRange<D>(start, end)
+  ngOnDestroy() {
+    this._selectionChanged.complete()
+  }
+}
+
+export function NAV_RANGE_DATE_SELECTION_MODEL_FACTORY(
+  parent: NavDateSelectionModel<unknown>, adapter: DateAdapter<unknown>) {
+  return new NavDateSelectionModel(null, adapter)
+}
+
+/**
+ * Used to provide a range selection model to a components.
+ **/
+export const NAV_RANGE_DATE_SELECTION_MODEL_PROVIDER: FactoryProvider = {
+  provide: NavDateSelectionModel,
+  deps: [[new Optional(), new SkipSelf(), NavDateSelectionModel], DateAdapter],
+  useFactory: NAV_RANGE_DATE_SELECTION_MODEL_FACTORY,
 }

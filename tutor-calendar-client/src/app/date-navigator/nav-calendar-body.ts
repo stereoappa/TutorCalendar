@@ -52,7 +52,8 @@ export class CalendarBodyComponent implements OnDestroy  {
       const element = _elementRef.nativeElement
       element.addEventListener('mousedown', this._cellMouseDown, true)
       element.addEventListener('mouseup', this._cellMouseUp, true)
-      element.addEventListener('mouseover', this._cellMouseLeave, true)
+      element.addEventListener('mouseover', this._cellMouseOver, true)
+      element.addEventListener('mouseleave', this._cellMouseLeave, true)
     })
   }
 
@@ -77,11 +78,10 @@ export class CalendarBodyComponent implements OnDestroy  {
     }
   }
 
-  private _cellMouseLeave = (event: Event) => {
+  private _cellMouseOver = (event: Event) => {
     if (this.previewStart && isTableCell(event.target as HTMLElement)) {
       const cell = this._getCellFromElement(event.target as HTMLElement)
       if (cell) {
-        console.log(cell.value)
         this._ngZone.run(
           () => this.previewChange.emit({
           value: cell,
@@ -91,9 +91,9 @@ export class CalendarBodyComponent implements OnDestroy  {
     }
   }
 
-  _cellClicked(cell: NavCalendarCell, event: MouseEvent): void {
-    if (cell.enabled && !this.isRange) {
-      this.selectedValueChange.emit({value: cell.compareValue, event})
+  private _cellMouseLeave = (event: Event) => {
+    if (event.target === this._elementRef.nativeElement) {
+      // this._ngZone.run(() => this.previewChange.emit({value: null, event, selectionComplete: true}))
     }
   }
 
@@ -143,7 +143,7 @@ export class CalendarBodyComponent implements OnDestroy  {
     const element = this._elementRef.nativeElement
     element.removeEventListener('mousedown', this._cellMouseDown, true)
     element.removeEventListener('mouseup', this._cellMouseUp, true)
-    element.removeEventListener('mouseleave', this._cellMouseLeave, true)
+    element.removeEventListener('mouseleave', this._cellMouseOver, true)
   }
 }
 

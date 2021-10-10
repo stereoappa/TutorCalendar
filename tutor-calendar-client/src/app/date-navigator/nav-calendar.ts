@@ -1,16 +1,15 @@
 import {
   AfterContentInit,
   ChangeDetectionStrategy,
-  Component, EventEmitter,
+  Component,
   Inject,
   Input,
   OnChanges,
   Optional,
-  Output,
   SimpleChanges
 } from '@angular/core'
 import {DateAdapter} from '../../core/date-adapter'
-import {DateRange} from './date-selection-model'
+import {DateRange, NavDateSelectionModel} from './date-selection-model'
 import {NavCalendarCell, NavCalendarUserEvent} from './nav-calendar-body'
 import {DateFormats, NAV_DATE_FORMATS} from '../../core/date-formats'
 
@@ -56,9 +55,6 @@ export class NavCalendar<D> implements AfterContentInit, OnChanges {
     }
   }
 
-  @Output() readonly _userSelection: EventEmitter<NavCalendarUserEvent<D | DateRange<D> | null>> =
-    new EventEmitter<NavCalendarUserEvent<D | DateRange<D> |  null>>()
-
   private _activeDate: D
 
   _monthLabel: string
@@ -83,7 +79,8 @@ export class NavCalendar<D> implements AfterContentInit, OnChanges {
 
   _weekdays: { long: string, narrow: string }[]
 
-  constructor(@Optional() public _dateAdapter: DateAdapter<D>,
+  constructor(private _model: NavDateSelectionModel<D>,
+              @Optional() public _dateAdapter: DateAdapter<D>,
               @Optional() @Inject(NAV_DATE_FORMATS) private _dateFormats: DateFormats) {
   }
 
@@ -93,7 +90,6 @@ export class NavCalendar<D> implements AfterContentInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('[nav-calendar] - ON CHANGE!', changes)
   }
 
   _init(): void {
@@ -181,7 +177,8 @@ export class NavCalendar<D> implements AfterContentInit, OnChanges {
     const selectedDate = this._dateAdapter.parse(event.value)
 
     this._previewStart = this._previewEnd = null
-    this._userSelection.emit({value: selectedDate, event: event.event})
+
+    this._model.updateSelection(selectedDate, this)
   }
 
   _previewChanged(event: NavCalendarUserEvent<NavCalendarCell<D> | null>) {
@@ -192,12 +189,13 @@ export class NavCalendar<D> implements AfterContentInit, OnChanges {
       }
 
       this._previewEnd = this._getCellCompareValue(event.value.rawValue)
-      this._userSelection.emit({value: this._createPreview(), event: null, selectionComplete: false})
+      this.selected = this._createPreview()
+
       return
     }
 
     this._previewEnd = this._getCellCompareValue(event.value.rawValue)
-    this._userSelection.emit({value: this._createPreview(), event: null, selectionComplete: false})
+    this._model.updateSelection(this._createPreview(), this)
 
     this._previewStart = this._previewEnd = null
   }

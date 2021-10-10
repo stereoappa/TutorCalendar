@@ -1,11 +1,8 @@
 import {NgModule} from '@angular/core'
 import {NavCalendar} from './nav-calendar'
 import {CommonModule} from '@angular/common'
-import {DateAdapter, NAV_DATE_LOCALE} from '../../core/date-adapter'
-import {MomentDateAdapter} from '../../core/moment-adapter/moment-date-adapter'
 import {CalendarBodyComponent} from './nav-calendar-body'
-import {NAV_DATE_FORMATS} from '../../core/date-formats'
-import {NAV_MOMENT_DATE_FORMATS} from '../../core/moment-adapter/moment-date-formats'
+import {NAV_RANGE_DATE_SELECTION_MODEL_PROVIDER} from './date-selection-model'
 
 @NgModule({
   declarations: [
@@ -16,16 +13,6 @@ import {NAV_MOMENT_DATE_FORMATS} from '../../core/moment-adapter/moment-date-for
     NavCalendar,
     CalendarBodyComponent
   ],
-  providers: [
-    {
-      provide: DateAdapter,
-      useClass: MomentDateAdapter,
-      deps: [NAV_DATE_LOCALE]
-    },
-    {
-      provide: NAV_DATE_FORMATS,
-      useValue: NAV_MOMENT_DATE_FORMATS
-    }
-  ]
+  providers: [NAV_RANGE_DATE_SELECTION_MODEL_PROVIDER]
 })
 export class DateNavigatorModule { }
