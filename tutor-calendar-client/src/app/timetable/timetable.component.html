@@ -25,7 +25,7 @@
       <div class="vertical-grid-line line-delta"></div>
 
       <div class="days" *ngFor="let day of daysCoverage">
-        <div class="day">
+        <div class="day" [attr.data-datekey]="day.datekey">
           <div class="layout"></div>
         </div>
       </div>

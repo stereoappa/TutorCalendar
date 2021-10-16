@@ -14,9 +14,12 @@ export class MomentDateAdapter extends DateAdapter<moment.Moment> {
     narrowDaysOfWeek: string[]
   }
 
+  private readonly _minDate
+
   constructor(@Optional() @Inject(NAV_DATE_LOCALE) dateLocale: string) {
     super()
     this.setLocale(dateLocale || moment.locale())
+    this._minDate = this.createDate(1949, 4, 19)
   }
 
   setLocale(locale: any): void {
@@ -82,6 +85,15 @@ export class MomentDateAdapter extends DateAdapter<moment.Moment> {
 
   getDate(date: moment.Moment): number {
     return this.clone(date).date()
+  }
+
+  getDateKey(date: moment.Moment): number {
+    return this.clone(date).diff(this._minDate, 'days')
+  }
+
+  getDateByKey(key: number): moment.Moment {
+    const date = this.addCalendarDays(this.clone(this._minDate), key)
+    return this.createDate(this.getYear(date), this.getMonth(date), this.getDate(date))
   }
 
   getHour(date: moment.Moment): number {

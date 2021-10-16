@@ -48,6 +48,10 @@ export abstract class DateAdapter<D, L = any> {
 
   abstract getDate(date: D): number
 
+  abstract getDateKey(date: D): number
+
+  abstract getDateByKey(key: number): D
+
   abstract getDayOfWeek(date: D): number
 
   abstract getMonthNames(style: 'long' | 'short' | 'narrow'): string[]
