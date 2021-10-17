@@ -1,5 +1,4 @@
 <div class="timetable">
-
   <div class="row">
     <div class="timeline"></div>
     <div class="line-delta"></div>
@@ -26,7 +25,13 @@
 
       <div class="days" *ngFor="let day of daysCoverage">
         <div class="day" [attr.data-datekey]="day.datekey">
-          <div class="layout"></div>
+          <div class="layout">
+            <app-slot *ngFor="let slot of day.slots"
+                      [title]="slot.title"
+                      [timeRangeTitle]="slot.timeRangeTitle"
+                      [positionStyles]="slot.positionStyles">
+            </app-slot>
+          </div>
         </div>
       </div>
 

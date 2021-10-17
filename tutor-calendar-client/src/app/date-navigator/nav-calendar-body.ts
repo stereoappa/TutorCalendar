@@ -59,6 +59,10 @@ export class CalendarBodyComponent implements OnDestroy  {
 
   private _cellMouseDown = (event: Event) => {
     const cell = this._getCellFromElement(event.target as HTMLElement)
+    if (!cell) {
+      return
+    }
+
     this.previewStart = cell.compareValue
     if (cell) {
       this._ngZone.run(() => this.previewChange.emit({
@@ -70,6 +74,9 @@ export class CalendarBodyComponent implements OnDestroy  {
 
   private _cellMouseUp = (event: Event) => {
     const cell = this._getCellFromElement(event.target as HTMLElement)
+    if (!cell) {
+      return
+    }
 
     if (cell.compareValue != this.previewStart) {
       this._ngZone.run(() => this.previewChange.emit({value: cell, event, selectionComplete: true}))

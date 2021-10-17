@@ -10,13 +10,15 @@ import {DateAdapter, NAV_DATE_LOCALE} from '../core/date-adapter'
 import {MomentDateAdapter} from '../core/moment-adapter/moment-date-adapter'
 import {NAV_DATE_FORMATS} from '../core/date-formats'
 import {NAV_MOMENT_DATE_FORMATS} from '../core/moment-adapter/moment-date-formats'
+import { SlotComponent } from './slot/slot.component'
 
 @NgModule({
   declarations: [
     AppComponent,
     SidebarComponent,
     HeaderComponent,
-    TimetableComponent
+    TimetableComponent,
+    SlotComponent
   ],
   imports: [
     BrowserModule,

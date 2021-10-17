@@ -1,0 +1,25 @@
+.slot {
+  position: absolute;
+  width: 95%;
+  z-index: 10;
+
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+
+  border-radius: 4px;
+  background-color: rgb(179, 225, 247);
+
+  &:hover {
+    box-shadow: 0.5px 0.5px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .slot-content {
+    padding: 4px;
+    .slot-content-row {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}
