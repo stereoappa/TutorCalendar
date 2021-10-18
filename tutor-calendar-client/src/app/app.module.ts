@@ -10,7 +10,8 @@ import {DateAdapter, NAV_DATE_LOCALE} from '../core/date-adapter'
 import {MomentDateAdapter} from '../core/moment-adapter/moment-date-adapter'
 import {NAV_DATE_FORMATS} from '../core/date-formats'
 import {NAV_MOMENT_DATE_FORMATS} from '../core/moment-adapter/moment-date-formats'
-import { SlotComponent } from './slot/slot.component'
+import { SlotComponent } from './timetable/slot.component'
+import { TimetableColumnComponent } from './timetable/timetable-column.component'
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { SlotComponent } from './slot/slot.component'
     SidebarComponent,
     HeaderComponent,
     TimetableComponent,
-    SlotComponent
+    SlotComponent,
+    TimetableColumnComponent
   ],
   imports: [
     BrowserModule,

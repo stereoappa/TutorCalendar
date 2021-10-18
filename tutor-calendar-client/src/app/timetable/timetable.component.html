@@ -2,7 +2,7 @@
   <div class="row">
     <div class="timeline"></div>
     <div class="line-delta"></div>
-    <div class="table-title" *ngFor="let day of daysCoverage">
+    <div class="table-title" *ngFor="let day of _daysCoverage">
       <div class="title-grid-serif"></div>
       <div class="data weekday">{{day.weekday.narrow | uppercase}}</div>
       <div class="data number-day">{{day.title}}</div>
@@ -23,16 +23,11 @@
 
       <div class="vertical-grid-line line-delta"></div>
 
-      <div class="days" *ngFor="let day of daysCoverage">
-        <div class="day" [attr.data-datekey]="day.datekey">
-          <div class="layout">
-            <app-slot *ngFor="let slot of day.slots"
-                      [title]="slot.title"
-                      [timeRangeTitle]="slot.timeRangeTitle"
-                      [positionStyles]="slot.positionStyles">
-            </app-slot>
-          </div>
-        </div>
+      <div class="days" *ngFor="let day of _daysCoverage">
+        <app-timetable-column
+          [dateKey]="day.datekey"
+          [slots]="day.slots"
+        ></app-timetable-column>
       </div>
 
     </div>

@@ -8,9 +8,7 @@ import {Component, Input, OnInit} from '@angular/core'
 export class SlotComponent implements OnInit {
   @Input() title: string
 
-  @Input() timeRangeTitle: string
-
-  @Input() positionStyles: { top: string, height: string }
+  @Input() subTitle: string
 
   constructor() { }
 

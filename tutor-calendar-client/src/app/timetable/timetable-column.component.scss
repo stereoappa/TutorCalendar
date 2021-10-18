@@ -1,0 +1,10 @@
+@import "variables";
+
+:host, {
+  flex: 1 0 auto;
+  border-right: $border-color 1px solid;
+}
+
+.layout {
+  position: relative;
+}

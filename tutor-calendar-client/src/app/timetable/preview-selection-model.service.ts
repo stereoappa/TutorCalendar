@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core'
-import {TimetableDay} from './timetable.component'
 
 export class Time {
   constructor(public hour: number,
@@ -28,7 +27,7 @@ export class TimeRange {
 }
 
 @Injectable({providedIn: 'root'})
-export class TimeSelectionModel {
+export class PreviewSelectionModel {
 
   private _startTime: Time | null
 

@@ -18,15 +18,6 @@
     .days {
       flex: 1 0 auto;
       display: flex;
-      .day {
-        flex: 1 0 auto;
-        border-right: $border-color 1px solid;
-
-        .layout {
-          position: relative;
-
-        }
-      }
     }
   }
 

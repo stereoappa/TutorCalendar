@@ -2,7 +2,7 @@ import {Component, ElementRef, Input, NgZone, OnInit, ViewChild} from '@angular/
 import {DateAdapter} from '../../core/date-adapter'
 import {DateRange, NavDateSelectionModel} from '../date-navigator/date-selection-model'
 import {Subscription} from 'rxjs'
-import {TimeSelectionModel, Time, TimeRange} from './time-selection-model'
+import {PreviewSelectionModel, Time, TimeRange} from './preview-selection-model.service'
 
 export class TimetableDay<D = any> {
   constructor(public value: number,
@@ -15,21 +15,23 @@ export class TimetableDay<D = any> {
   }
 }
 
-interface ISlotPositionStyles {
-  top: string
-  height: string
+export interface ISlotPosition {
+  top: number,
+  height: number
 }
 
 export class Slot {
   constructor(readonly title: string | null,
-              readonly timeRangeTitle: string | null,
-              readonly positionStyles: ISlotPositionStyles) {
+              readonly subTitle: string | null,
+              readonly position: ISlotPosition) {
   }
 }
 
 const DEFAULT_TIMESTEP = 60
 
 const DEFAULT_SLOT_PRECISION = DEFAULT_TIMESTEP / 2
+
+const DEFAULT_SLOT_PREVIEW_PRECISION = DEFAULT_SLOT_PRECISION / 2
 
 @Component({
   selector: 'app-timetable',
@@ -57,35 +59,17 @@ export class TimetableComponent<D> implements OnInit {
 
   private _timestep: number
 
-  @Input()
-  get daysCoverage(): Array<TimetableDay<D>> | null {
-    return this._daysCoverage
-  }
-  set daysCoverage(value: Array<TimetableDay<D>> | null) {
-    this._daysCoverage = value
-  }
-  private _daysCoverage: Array<TimetableDay<D>> | null
+  _daysCoverage: Array<TimetableDay<D>> | null
 
   constructor(private _dateAdapter: DateAdapter<D>,
               private _dateSelectionModel: NavDateSelectionModel<D>,
-              private _timeSelectionModel: TimeSelectionModel,
+              private _previewSelectionModel: PreviewSelectionModel,
               private _elementRef: ElementRef<HTMLElement>, private _ngZone: NgZone) {
-    _ngZone.runOutsideAngular(() => {
-        const element = _elementRef.nativeElement
-        element.addEventListener('mousedown', this._cellMouseDown.bind(this), true)
-        element.addEventListener('mouseup', this._cellMouseUp.bind(this), true)
-        // element.addEventListener('mouseover', this._cellMouseOver.bind(this), true)
-        // element.addEventListener('mouseleave', this._cellMouseLeave, true)
-      }
-    )
     this._registerModel(_dateSelectionModel)
   }
 
   ngOnInit(): void {
     this._buildTimeline()
-    if (!this.daysCoverage) {
-      this.daysCoverage = [this._createTimeTableDay(this._dateAdapter.today())]
-    }
   }
 
   _registerModel(model: NavDateSelectionModel<D>): void {
@@ -101,7 +85,7 @@ export class TimetableComponent<D> implements OnInit {
       this._dateAdapter.getDate(today),
       7, 0, 0)
 
-    let scale: D[] = [startTimeline]
+    const scale: D[] = [startTimeline]
     while (this._dateAdapter.getHour(startTimeline) < 23) {
       startTimeline = this._dateAdapter.addCalendarTime(startTimeline, this.timestep, 'minutes')
       scale.push(startTimeline)
@@ -113,14 +97,18 @@ export class TimetableComponent<D> implements OnInit {
   }
 
   _initDaysCoverage(selection: D | DateRange<D>) {
+    if (!this._daysCoverage) {
+      this._daysCoverage = [this._createTimeTableDay(this._dateAdapter.today())]
+    }
+
     if (selection instanceof DateRange) {
       const range = selection as DateRange<D>
-      this.daysCoverage =
+      this._daysCoverage =
         this._dateAdapter.toArray(range.start, range.end)
           .map(day => this._createTimeTableDay(day))
     } else {
       const day = selection as D
-      this.daysCoverage = [this._createTimeTableDay(day)]
+      this._daysCoverage = [this._createTimeTableDay(day)]
     }
   }
 
@@ -137,52 +125,15 @@ export class TimetableComponent<D> implements OnInit {
       weekdays[this._dateAdapter.getDayOfWeek(day)],
       this._dateAdapter.getDateKey(day),
       day,
-      [])
+      [new Slot('sdf', 'sdf', {top: 100, height: 100})])
   }
 
   _getSlots(day: TimetableDay<D>) {
-    const coverageDay = this.daysCoverage.find(d => d.datekey === day.datekey)
+    const coverageDay = this._daysCoverage.find(d => d.datekey === day.datekey)
     if (coverageDay) {
-      coverageDay.slots = this._timeSelectionModel.selectionComplete ?
+      coverageDay.slots = this._previewSelectionModel.selectionComplete ?
         coverageDay.slots :
         [...coverageDay.slots, coverageDay.preview]
-    }
-  }
-
-  private _cellMouseDown(event) {
-    const dateKey = event.target.getAttribute('data-datekey')
-    if (dateKey) {
-      if (this._dateAdapter.getDateByKey(dateKey)) {
-        this._timeSelectionModel.previewStart(dateKey, this._getTime(event.clientY))
-
-        this._ngZone.runOutsideAngular(() => {
-          const element = this._elementRef.nativeElement
-          element.addEventListener('mousemove', this._cellMouseOver.bind(this), true)
-        })
-      }
-    }
-  }
-
-  private _cellMouseOver(event) {
-    console.log(event.clientY)
-    this._timeSelectionModel.previewUpdate(this._getTime(event.clientY))
-  }
-
-  private _cellMouseUp(event) {
-    if (!this._timeSelectionModel.selectionComplete) {
-      const preview = this._timeSelectionModel.getSelection()
-      const coverageDay = this._getCoverageDay(preview.dateKey)
-      if (coverageDay) {
-
-        this._ngZone.runOutsideAngular(() => {
-          const element = this._elementRef.nativeElement
-          element.removeEventListener('mousemove', this._cellMouseOver, true)
-        })
-
-        coverageDay.slots = [
-          ...coverageDay.slots,
-          new Slot('(new)', preview.timeRange.toString(), this._calculatePositionStyle(preview.timeRange))]
-      }
     }
   }
 
@@ -195,12 +146,12 @@ export class TimetableComponent<D> implements OnInit {
     return this._daysCoverage.find(d => this._dateAdapter.sameDate(d.rawValue, day)) ?? null
   }
 
-  private _calculatePositionStyle(timeRange: TimeRange): ISlotPositionStyles {
+  private _calculatePositionStyle(timeRange: TimeRange): ISlotPosition {
     const timePointsRect = this.timeline.nativeElement.getBoundingClientRect()
     const timePointHeightPx = Math.round(timePointsRect.height / this._timePoints.length)
 
     const selectedTimePoint = this._timePoints.findIndex(p => p.hour === timeRange.start.hour)
-    return {top: '100px', height: '100px'}
+    return {top: 100, height: 100}
   }
 
   private _getTime(clientY: number, precision: number = DEFAULT_SLOT_PRECISION): Time | null {

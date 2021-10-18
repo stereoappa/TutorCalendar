@@ -1,4 +1,6 @@
-.slot {
+:host {
+  display: flex;
+
   position: absolute;
   width: 95%;
   z-index: 10;
@@ -16,6 +18,7 @@
 
   .slot-content {
     padding: 4px;
+
     .slot-content-row {
       overflow: hidden;
       white-space: nowrap;
