@@ -1,17 +1,15 @@
 import {Component, ElementRef, Input, NgZone, OnInit, ViewChild} from '@angular/core'
 import {DateAdapter} from '../../core/date-adapter'
-import {DateRange, NavDateSelectionModel} from '../date-navigator/date-selection-model'
-import {Subscription} from 'rxjs'
+import {DateRange} from '../date-navigator/date-selection-model'
 import {PreviewSelectionModel, Time, TimeRange} from './preview-selection-model.service'
 
-export class TimetableDay<D = any> {
+export class ColumnDay<D = any> {
   constructor(public value: number,
               public title: string,
               public weekday: { long: string, narrow: string },
               public datekey: number,
               public rawValue: D,
-              public slots: Slot[] = [],
-              public preview?: Slot | null) {
+              public slots: Slot[] = []) {
   }
 }
 
@@ -39,43 +37,39 @@ const DEFAULT_SLOT_PREVIEW_PRECISION = DEFAULT_SLOT_PRECISION / 2
   styleUrls: ['./timetable.component.scss']
 })
 export class TimetableComponent<D> implements OnInit {
-  private _valueChangesSubscription = Subscription.EMPTY
-
-  _timePoints: Time[]
-
-  _previewTimeRange: TimeRange | null
 
   @ViewChild('timeline') timeline: ElementRef<HTMLElement>
+
+  @Input()
+  get days(): D | DateRange<D | null> {
+    return this._days
+  }
+  set days(value: D | DateRange<D> | null) {
+    this._days = value
+    this._initColumns()
+  }
+  private _days: D | DateRange<D> | null
 
   @Input()
   get timestep(): number {
     return this._timestep ?? DEFAULT_TIMESTEP
   }
-
   set timestep(value: number) {
     this._timestep = value
     this._buildTimeline()
   }
-
   private _timestep: number
 
-  _daysCoverage: Array<TimetableDay<D>> | null
+  timePoints: Time[]
+
+  columns: ColumnDay<D>[] | null
 
   constructor(private _dateAdapter: DateAdapter<D>,
-              private _dateSelectionModel: NavDateSelectionModel<D>,
               private _previewSelectionModel: PreviewSelectionModel,
               private _elementRef: ElementRef<HTMLElement>, private _ngZone: NgZone) {
-    this._registerModel(_dateSelectionModel)
   }
 
-  ngOnInit(): void {
-    this._buildTimeline()
-  }
-
-  _registerModel(model: NavDateSelectionModel<D>): void {
-    this._valueChangesSubscription.unsubscribe()
-    this._valueChangesSubscription = model.selectionChanged.subscribe(event => this._initDaysCoverage(event.selection))
-  }
+  ngOnInit(): void { }
 
   _buildTimeline() {
     const today = this._dateAdapter.today()
@@ -91,35 +85,36 @@ export class TimetableComponent<D> implements OnInit {
       scale.push(startTimeline)
     }
 
-    this._timePoints = scale.map(time => {
+    this.timePoints = scale.map(time => {
       return new Time(this._dateAdapter.getHour(time), this._dateAdapter.getMinute(time))
     })
   }
 
-  _initDaysCoverage(selection: D | DateRange<D>) {
-    if (!this._daysCoverage) {
-      this._daysCoverage = [this._createTimeTableDay(this._dateAdapter.today())]
+  _initColumns() {
+    if (!this.days) {
+      this.columns = [this._toColumnDay(this._dateAdapter.today())]
     }
 
-    if (selection instanceof DateRange) {
-      const range = selection as DateRange<D>
-      this._daysCoverage =
-        this._dateAdapter.toArray(range.start, range.end)
-          .map(day => this._createTimeTableDay(day))
+    if (this.days instanceof DateRange) {
+      const range = this.days as DateRange<D>
+      this.columns =
+        this._dateAdapter
+          .toArray(range.start, range.end)
+          .map(day => this._toColumnDay(day))
     } else {
-      const day = selection as D
-      this._daysCoverage = [this._createTimeTableDay(day)]
+      const day = this.days as D
+      this.columns = [this._toColumnDay(day)]
     }
   }
 
-  _createTimeTableDay(day: D) {
+  _toColumnDay(day: D): ColumnDay<D> {
     const narrowWeekdays = this._dateAdapter.getDayOfWeekNames('narrow')
     const longWeekdays = this._dateAdapter.getDayOfWeekNames('long')
     const weekdays = longWeekdays.map((long, i) => {
       return {long, narrow: narrowWeekdays[i]}
     })
 
-    return new TimetableDay<D>(
+    return new ColumnDay<D>(
       this._dateAdapter.getDate(day),
       this._dateAdapter.format(day, 'DD'),
       weekdays[this._dateAdapter.getDayOfWeek(day)],
@@ -128,29 +123,19 @@ export class TimetableComponent<D> implements OnInit {
       [new Slot('sdf', 'sdf', {top: 100, height: 100})])
   }
 
-  _getSlots(day: TimetableDay<D>) {
-    const coverageDay = this._daysCoverage.find(d => d.datekey === day.datekey)
-    if (coverageDay) {
-      coverageDay.slots = this._previewSelectionModel.selectionComplete ?
-        coverageDay.slots :
-        [...coverageDay.slots, coverageDay.preview]
-    }
-  }
-
-  private _getCoverageDay(dateKey: number) {
+  private _getColumn(dateKey: number) {
     if (!dateKey) {
       return null
     }
-
     const day = this._dateAdapter.getDateByKey(dateKey)
-    return this._daysCoverage.find(d => this._dateAdapter.sameDate(d.rawValue, day)) ?? null
+    return this.columns.find(d => this._dateAdapter.sameDate(d.rawValue, day)) ?? null
   }
 
   private _calculatePositionStyle(timeRange: TimeRange): ISlotPosition {
     const timePointsRect = this.timeline.nativeElement.getBoundingClientRect()
-    const timePointHeightPx = Math.round(timePointsRect.height / this._timePoints.length)
+    const timePointHeightPx = Math.round(timePointsRect.height / this.timePoints.length)
 
-    const selectedTimePoint = this._timePoints.findIndex(p => p.hour === timeRange.start.hour)
+    const selectedTimePoint = this.timePoints.findIndex(p => p.hour === timeRange.start.hour)
     return {top: 100, height: 100}
   }
 
@@ -158,10 +143,10 @@ export class TimetableComponent<D> implements OnInit {
     const timePointsRect = this.timeline.nativeElement.getBoundingClientRect()
 
     const timelineOffsetY = Math.floor(clientY - timePointsRect.top)
-    const timePointHeightPx = Math.round(timePointsRect.height / this._timePoints.length)
+    const timePointHeightPx = Math.round(timePointsRect.height / this.timePoints.length)
 
     const selectedPointRatio = (timelineOffsetY / timePointHeightPx)
-    const selectedTimePoint = this._timePoints[Math.trunc(selectedPointRatio)]
+    const selectedTimePoint = this.timePoints[Math.trunc(selectedPointRatio)]
 
     const selectedPointMinuteRatio = selectedPointRatio - Math.trunc(selectedPointRatio)
     const selectedMinutes = Math.trunc(selectedPointMinuteRatio % 1 * this.timestep)

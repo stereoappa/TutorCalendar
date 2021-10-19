@@ -8,7 +8,7 @@ import {Slot} from './timetable.component'
 })
 export class TimetableColumnComponent<D>  {
 
-  @Input() dateKey: string
+  @Input() dateKey: number
 
   @Input() slots: Slot[] | []
 

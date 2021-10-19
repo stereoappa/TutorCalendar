@@ -2,31 +2,31 @@
   <div class="row">
     <div class="timeline"></div>
     <div class="line-delta"></div>
-    <div class="table-title" *ngFor="let day of _daysCoverage">
+    <div class="table-title" *ngFor="let col of columns">
       <div class="title-grid-serif"></div>
-      <div class="data weekday">{{day.weekday.narrow | uppercase}}</div>
-      <div class="data number-day">{{day.title}}</div>
+      <div class="data weekday">{{col.weekday.narrow | uppercase}}</div>
+      <div class="data number-day">{{col.title}}</div>
     </div>
   </div>
 
   <div class="row">
     <div class="table-container">
       <div class="timeline" data-role="timeline" #timeline>
-        <div class="time-point" data-time-point="{{point.toString()}}" *ngFor="let point of _timePoints">
+        <div class="time-point" data-time-point="{{point.toString()}}" *ngFor="let point of timePoints">
           {{point.toString()}}
         </div>
       </div>
 
       <div class="grid">
-        <div role="row" *ngFor="let point of _timePoints"></div>
+        <div role="row" *ngFor="let point of timePoints"></div>
       </div>
 
       <div class="vertical-grid-line line-delta"></div>
 
-      <div class="days" *ngFor="let day of _daysCoverage">
-        <app-timetable-column
-          [dateKey]="day.datekey"
-          [slots]="day.slots"
+      <div class="columns">
+        <app-timetable-column *ngFor="let col of columns"
+          [dateKey]="col.datekey"
+          [slots]="col.slots"
         ></app-timetable-column>
       </div>
 

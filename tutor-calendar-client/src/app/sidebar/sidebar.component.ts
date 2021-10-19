@@ -11,7 +11,6 @@ export class SidebarComponent<D> implements OnInit, OnChanges {
   constructor(
     private _model: NavDateSelectionModel<D>,
     private _dateAdapter: DateAdapter<D>) {
-
   }
 
   ngOnChanges(changes: SimpleChanges): void {
