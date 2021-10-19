@@ -12,8 +12,9 @@
   <div class="row">
     <div class="table-container">
       <div class="timeline" data-role="timeline" #timeline>
-        <div class="time-point" data-time-point="{{point.toString()}}" *ngFor="let point of timePoints">
-          {{point.toString()}}
+        <div *ngFor="let point of timePoints"
+             class="time-point"
+             data-time-point="{{point.toString()}}">{{point.toString()}}
         </div>
       </div>
 
@@ -27,6 +28,7 @@
         <app-timetable-column *ngFor="let col of columns"
           [dateKey]="col.datekey"
           [slots]="col.slots"
+          (previewChange)="_previewChanged($event)"
         ></app-timetable-column>
       </div>
 

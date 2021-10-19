@@ -2,7 +2,8 @@ import {Injectable} from '@angular/core'
 
 export class Time {
   constructor(public hour: number,
-              public minute: number) {
+              public minute: number,
+              public second?: number | 0) {
   }
 
   toString() {
@@ -12,7 +13,11 @@ export class Time {
   addMinutes(minutes: number): Time {
     return new Time(
       this.hour + Math.trunc((this.minute + minutes) / 60),
-      (this.minute + minutes) % 60)
+      (this.minute + minutes) % 60, 0)
+  }
+
+  clone() {
+    return new Time(this.hour, this.minute, this.second)
   }
 }
 

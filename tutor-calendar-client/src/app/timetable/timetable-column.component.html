@@ -1,10 +1,10 @@
 <div class="day" [attr.data-datekey]="dateKey">
   <div class="layout">
-    <app-slot *ngFor="let slot of slots"
-              [attr.draggable]="true"
-              [title]="slot.title"
-              [subTitle]="slot.subTitle"
-              [ngStyle]="{'top.px': slot.position.top, 'height.px': slot.position.height}">
-    </app-slot>
+    <app-timetable-slot *ngFor="let slot of slots"
+                        [attr.draggable]="true"
+                        [title]="slot.title"
+                        [subTitle]="slot.subTitle"
+                        [ngStyle]="{'top.px': slot.position.top, 'height.px': slot.position.height}">
+    </app-timetable-slot>
   </div>
 </div>

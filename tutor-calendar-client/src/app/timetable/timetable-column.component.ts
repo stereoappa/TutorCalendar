@@ -1,32 +1,46 @@
-import {Component, Input} from '@angular/core'
+import {Component, ElementRef, EventEmitter, Input, NgZone, Output} from '@angular/core'
 import {Slot} from './timetable.component'
+
+export class TimetableSlotPreview {
+  constructor(public dateKey: number,
+              public selectionComplete: boolean) {
+  }
+}
+
+export interface TimetableUserEvent<T> {
+  value: T
+  event: Event
+}
 
 @Component({
   selector: 'app-timetable-column',
   templateUrl: './timetable-column.component.html',
   styleUrls: ['./timetable-column.component.scss']
 })
-export class TimetableColumnComponent<D>  {
+export class TimetableColumnComponent {
 
   @Input() dateKey: number
 
   @Input() slots: Slot[] | []
 
-  constructor() { }
+  @Output() readonly previewChange =
+    new EventEmitter<TimetableUserEvent<TimetableSlotPreview> | null>()
 
-  // private _cellMouseDown(event) {
-  //   const dateKey = event.target.getAttribute('data-datekey')
-  //   if (dateKey) {
-  //     if (this._dateAdapter.getDateByKey(dateKey)) {
-  //       this._previewSelectionModel.previewStart(dateKey, this._getTime(event.clientY))
-  //
-  //       this._ngZone.runOutsideAngular(() => {
-  //         const element = this._elementRef.nativeElement
-  //         element.addEventListener('mousemove', this._cellMouseOver.bind(this), true)
-  //       })
-  //     }
-  //   }
-  // }
+  constructor(private _elementRef: ElementRef<HTMLElement>, private _ngZone: NgZone) {
+    _ngZone.runOutsideAngular(() => {
+        const element = _elementRef.nativeElement
+        element.addEventListener('mousedown', this._cellMouseDown, true)
+      }
+    )
+  }
+
+  private _cellMouseDown = (event: Event) => {
+    this._ngZone.run(() => this.previewChange.emit({
+      value: new TimetableSlotPreview(this.dateKey, false),
+      event
+    }))
+  }
+
   // private _cellMouseOver(event) {
   //   console.log(event.clientY)
   //   this._previewSelectionModel.previewUpdate(this._getTime(event.clientY))
