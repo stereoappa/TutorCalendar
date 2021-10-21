@@ -1,5 +1,5 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core'
-import {Time} from './preview-selection-model.service'
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core'
+import {Time, TimeRange} from './time-model'
 import {TimetableSlotPreview, TimetableUserEvent} from './timetable-column.component'
 
 export class ColumnDay<D = any> {
@@ -17,10 +17,16 @@ export interface ISlotPosition {
   height: number
 }
 
-export class Slot {
+export class SlotPreview {
+  constructor(readonly timeRange: TimeRange | null) {
+  }
+}
+
+export class Slot extends SlotPreview {
   constructor(readonly title: string | null,
               readonly subTitle: string | null,
               readonly position: ISlotPosition) {
+    super(null)
   }
 }
 
@@ -28,7 +34,7 @@ const DEFAULT_TIMESTEP = 60
 
 const DEFAULT_SLOT_PRECISION = DEFAULT_TIMESTEP / 2
 
-const DEFAULT_SLOT_PREVIEW_PRECISION = DEFAULT_SLOT_PRECISION / 2
+const DEFAULT_PREVIEW_PRECISION = DEFAULT_SLOT_PRECISION / 2
 
 @Component({
   selector: 'app-timetable',
@@ -46,6 +52,9 @@ export class TimetableComponent<D> implements OnInit {
   @Input() startTimeline: Time
 
   @Input() endTimeline: Time
+
+  @Output() readonly previewChange =
+    new EventEmitter<TimetableUserEvent<SlotPreview>>()
 
   timePoints: Time[]
 
@@ -65,7 +74,11 @@ export class TimetableComponent<D> implements OnInit {
   }
 
   _previewChanged(event: TimetableUserEvent<TimetableSlotPreview | null>) {
-    console.log('PREVIEW STARTED', event.value)
+    this.previewChange.emit({
+      value: new SlotPreview(new TimeRange(this._getTime(event.value.clientY, DEFAULT_PREVIEW_PRECISION), null)),
+      datekey: event.datekey,
+      event: event.event
+    })
   }
 
   private _getTime(clientY: number, precision: number = DEFAULT_SLOT_PRECISION): Time | null {

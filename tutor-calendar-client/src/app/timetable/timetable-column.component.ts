@@ -2,13 +2,14 @@ import {Component, ElementRef, EventEmitter, Input, NgZone, Output} from '@angul
 import {Slot} from './timetable.component'
 
 export class TimetableSlotPreview {
-  constructor(public dateKey: number,
+  constructor(public clientY: number,
               public selectionComplete: boolean) {
   }
 }
 
 export interface TimetableUserEvent<T> {
   value: T
+  datekey: number
   event: Event
 }
 
@@ -34,9 +35,10 @@ export class TimetableColumnComponent {
     )
   }
 
-  private _cellMouseDown = (event: Event) => {
+  private _cellMouseDown = (event: MouseEvent) => {
     this._ngZone.run(() => this.previewChange.emit({
-      value: new TimetableSlotPreview(this.dateKey, false),
+      value: new TimetableSlotPreview(event.clientY, false),
+      datekey: this.dateKey,
       event
     }))
   }

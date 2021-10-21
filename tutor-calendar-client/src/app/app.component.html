@@ -9,6 +9,10 @@
     [columns]="_columns"
     [startTimeline]="_startTimeline"
     [endTimeline]="_endTimeline"
+    (previewChange)="_initPreviewMode($event)"
   ></app-timetable>
+
 </div>
+
+<app-timetable-preview *ngIf="_isPreviewMode"></app-timetable-preview>
 

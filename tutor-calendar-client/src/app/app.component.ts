@@ -2,8 +2,9 @@ import {Component} from '@angular/core'
 import {DateAdapter} from '../core/date-adapter'
 import {DateRange, NavDateSelectionModel} from './date-navigator/date-selection-model'
 import {Subscription} from 'rxjs'
-import {ColumnDay, Slot} from './timetable/timetable.component'
-import {Time} from './timetable/preview-selection-model.service'
+import {ColumnDay, Slot, SlotPreview} from './timetable/timetable.component'
+import {Time} from './timetable/time-model'
+import {TimetableUserEvent} from './timetable/timetable-column.component'
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,8 @@ import {Time} from './timetable/preview-selection-model.service'
 })
 export class AppComponent<D> {
   private _valueChangesSubscription = Subscription.EMPTY
+
+  _isPreviewMode: boolean | null = false
 
   _columns: ColumnDay<D>[] | null
 
@@ -78,4 +81,8 @@ export class AppComponent<D> {
   //   const selectedTimePoint = this.timePoints.findIndex(p => p.hour === timeRange.start.hour)
   //   return {top: 100, height: 100}
   // }
+  _initPreviewMode(event: TimetableUserEvent<SlotPreview>) {
+    console.log('APP COMPONENT PREVIEW: ', event.value)
+    this._isPreviewMode = true
+  }
 }

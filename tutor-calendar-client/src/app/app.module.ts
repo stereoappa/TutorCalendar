@@ -12,16 +12,18 @@ import {NAV_DATE_FORMATS} from '../core/date-formats'
 import {NAV_MOMENT_DATE_FORMATS} from '../core/moment-adapter/moment-date-formats'
 import { TimetableSlotComponent } from './timetable/timetable-slot.component'
 import { TimetableColumnComponent } from './timetable/timetable-column.component'
+import { TimetablePreview } from './timetable/timetable-preview'
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    SidebarComponent,
-    HeaderComponent,
-    TimetableComponent,
-    TimetableSlotComponent,
-    TimetableColumnComponent
-  ],
+    declarations: [
+        AppComponent,
+        SidebarComponent,
+        HeaderComponent,
+        TimetableComponent,
+        TimetableSlotComponent,
+        TimetableColumnComponent,
+        TimetablePreview
+    ],
   imports: [
     BrowserModule,
     SharedModule
