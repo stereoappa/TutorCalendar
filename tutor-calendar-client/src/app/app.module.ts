@@ -12,7 +12,9 @@ import {NAV_DATE_FORMATS} from '../core/date-formats'
 import {NAV_MOMENT_DATE_FORMATS} from '../core/moment-adapter/moment-date-formats'
 import { TimetableSlotComponent } from './timetable/timetable-slot.component'
 import { TimetableColumnComponent } from './timetable/timetable-column.component'
-import { TimetablePreview } from './timetable/timetable-preview'
+import { TimetablePreviewComponent } from './timetable/timetable-preview.component'
+import {TimetablePreviewService} from './timetable/timetable-preview.service'
+import {OverlayModule} from '@angular/cdk/overlay'
 
 @NgModule({
     declarations: [
@@ -22,11 +24,12 @@ import { TimetablePreview } from './timetable/timetable-preview'
         TimetableComponent,
         TimetableSlotComponent,
         TimetableColumnComponent,
-        TimetablePreview
+        TimetablePreviewComponent
     ],
   imports: [
     BrowserModule,
-    SharedModule
+    SharedModule,
+    OverlayModule
   ],
   providers: [
     {
@@ -41,7 +44,11 @@ import { TimetablePreview } from './timetable/timetable-preview'
     {
       provide: NAV_DATE_FORMATS,
       useValue: NAV_MOMENT_DATE_FORMATS
-    }],
+    },
+    TimetablePreviewService],
+  entryComponents: [
+    TimetablePreviewComponent
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -5,6 +5,7 @@ import {Subscription} from 'rxjs'
 import {ColumnDay, Slot, SlotPreview} from './timetable/timetable.component'
 import {Time} from './timetable/time-model'
 import {TimetableUserEvent} from './timetable/timetable-column.component'
+import {TimetablePreviewOverlayRef, TimetablePreviewService} from './timetable/timetable-preview.service'
 
 @Component({
   selector: 'app-root',
@@ -23,6 +24,7 @@ export class AppComponent<D> {
   _endTimeline: Time
 
   constructor(private model: NavDateSelectionModel<D>,
+              private _previewService: TimetablePreviewService,
               private _dateAdapter: DateAdapter<D>) {
     this._startTimeline = new Time(7, 0)
     this._endTimeline = new Time(23, 0)
@@ -84,5 +86,14 @@ export class AppComponent<D> {
   _initPreviewMode(event: TimetableUserEvent<SlotPreview>) {
     console.log('APP COMPONENT PREVIEW: ', event.value)
     this._isPreviewMode = true
+    this._startPreview()
+  }
+
+  _startPreview() {
+    let previewRef: TimetablePreviewOverlayRef = this._previewService.open()
+
+    setTimeout(() => {
+      previewRef.close()
+    }, 20000)
   }
 }

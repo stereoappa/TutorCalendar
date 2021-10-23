@@ -2,10 +2,10 @@ import {Component, Input, OnInit} from '@angular/core'
 
 @Component({
   selector: 'app-timetable-preview',
-  templateUrl: './timetable-preview.html',
-  styleUrls: ['./timetable-preview.scss']
+  templateUrl: './timetable-preview.component.html',
+  styleUrls: ['./timetable-preview.component.scss']
 })
-export class TimetablePreview implements OnInit {
+export class TimetablePreviewComponent implements OnInit {
   @Input() title: string
 
   @Input() subTitle: string
