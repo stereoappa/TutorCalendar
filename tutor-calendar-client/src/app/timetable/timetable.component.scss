@@ -25,8 +25,7 @@
     position: relative;
     flex: 1 1 0%;
 
-    width: $cell-width;
-    min-width: $cell-width;
+    min-width: $min-column-width;
     height: $title-height;
 
     font-weight: 400;

@@ -1,17 +1,39 @@
-import {Component, ElementRef, EventEmitter, Input, NgZone, Output} from '@angular/core'
-import {Slot} from './timetable.component'
+import {Component, ElementRef, EventEmitter, Inject, Input, NgZone, Output} from '@angular/core'
+import {TimetableUserEvent} from './timetable.component'
+import {TimeRange} from './time-model'
+import {DOCUMENT} from '@angular/common'
 
-export class TimetableSlotPreview {
-  constructor(public clientY: number,
-              public selectionComplete: boolean) {
+export class ColumnDay<D = any> {
+  constructor(public value: number,
+              public title: string,
+              public weekday: { long: string, narrow: string },
+              public datekey: number,
+              public rawValue: D,
+              public slots: Slot[] = []) {
   }
 }
 
-export interface TimetableUserEvent<T> {
-  value: T
-  datekey: number
-  event: Event
+export interface ISlotPosition {
+  top: number,
+  height: number
 }
+
+export class Slot {
+  constructor(readonly title: string | null,
+              readonly subTitle: string | null,
+              readonly timeRange: TimeRange | null,
+              readonly position: ISlotPosition) {
+  }
+}
+
+export class TimetablePointerEventArgs {
+  constructor(public dateKey: number,
+              public clientY: number,
+              public action: 'click' | 'selection' | 'selectionEnd') {
+  }
+}
+
+const FIRING_EVENT_THRESHOLD = 5
 
 @Component({
   selector: 'app-timetable-column',
@@ -24,43 +46,55 @@ export class TimetableColumnComponent {
 
   @Input() slots: Slot[] | []
 
-  @Output() readonly previewChange =
-    new EventEmitter<TimetableUserEvent<TimetableSlotPreview> | null>()
+  @Output() readonly selectionChanged =
+    new EventEmitter<TimetableUserEvent<TimetablePointerEventArgs> | null>()
 
-  constructor(private _elementRef: ElementRef<HTMLElement>, private _ngZone: NgZone) {
+  private _lastMouseDownY: number | null
+
+  constructor(private _elementRef: ElementRef<HTMLElement>,
+              private _ngZone: NgZone,
+              @Inject(DOCUMENT) private document: Document) {
     _ngZone.runOutsideAngular(() => {
         const element = _elementRef.nativeElement
-        element.addEventListener('mousedown', this._cellMouseDown, true)
+        element.addEventListener('click', this._emitSelectionChangedEvent, true)
+        element.addEventListener('mousedown', this._columnMouseDown, true)
       }
     )
   }
 
-  private _cellMouseDown = (event: MouseEvent) => {
-    this._ngZone.run(() => this.previewChange.emit({
-      value: new TimetableSlotPreview(event.clientY, false),
-      datekey: this.dateKey,
+  private _columnMouseDown = (event: MouseEvent) => {
+    this._lastMouseDownY = event.clientY
+
+    this._ngZone.runOutsideAngular(() => {
+      this.document.addEventListener('mousemove', this._mouseMoveHandler, true)
+      this.document.addEventListener('mouseup', this._mouseUpHandler, true)
+    })
+  }
+
+  private _mouseMoveHandler = (e: MouseEvent) => this._threshold(this._emitSelectionChangedEvent, FIRING_EVENT_THRESHOLD, e)
+
+  private _mouseUpHandler = (e: MouseEvent) => {
+    this.document.removeEventListener('mousemove', this._mouseMoveHandler, true)
+    this.document.removeEventListener('mouseup', this._mouseUpHandler, true)
+    this._emitSelectionChangedEvent(e)
+  }
+
+  private _emitSelectionChangedEvent = (event: MouseEvent) => {
+    this._ngZone.run(() => this.selectionChanged.emit({
+      args: new TimetablePointerEventArgs(
+        this.dateKey,
+        event.clientY,
+        event.type === 'click' ? 'click' :
+           event.type === 'mousemove' ? 'selection' :
+             'selectionEnd'),
       event
     }))
   }
 
-  // private _cellMouseOver(event) {
-  //   console.log(event.clientY)
-  //   this._previewSelectionModel.previewUpdate(this._getTime(event.clientY))
-  // }
-  //
-  // private _cellMouseUp(event) {
-  //   debugger
-  //   this._elementRef.nativeElement.removeEventListener('mousemove', this._cellMouseOver.bind(this), true)
-  //   if (!this._previewSelectionModel.selectionComplete) {
-  //     const preview = this._previewSelectionModel.getSelection()
-  //     const coverageDay = this._getCoverageDay(preview.dateKey)
-  //     if (coverageDay) {
-  //
-  //
-  //       coverageDay.slots = [
-  //         ...coverageDay.slots,
-  //         new Slot('(new)', preview.timeRange.toString(), this._calculatePositionStyle(preview.timeRange))]
-  //     }
-  //   }
-  // }
+  private _threshold = (fn: Function, threshold: number, event: MouseEvent) => {
+    if (Math.abs(this._lastMouseDownY - event.clientY) > threshold) {
+      this._lastMouseDownY = event.clientY
+      fn(event)
+    }
+  }
 }

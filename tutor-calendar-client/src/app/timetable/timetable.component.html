@@ -24,11 +24,11 @@
 
       <div class="vertical-grid-line line-delta"></div>
 
-      <div class="columns">
+      <div class="columns" #columnsContainer>
         <app-timetable-column *ngFor="let col of columns"
           [dateKey]="col.datekey"
           [slots]="col.slots"
-          (previewChange)="_previewChanged($event)"
+          (selectionChanged)="_previewChanged($event)"
         ></app-timetable-column>
       </div>
 

@@ -10,7 +10,7 @@ export class NavCalendarCell<D = any> {
 }
 
 export interface NavCalendarUserEvent<D> {
-  value: D
+  args: D
   event: Event
   selectionComplete?: boolean
 }
@@ -66,7 +66,7 @@ export class CalendarBodyComponent implements OnDestroy  {
     this.previewStart = cell.compareValue
     if (cell) {
       this._ngZone.run(() => this.previewChange.emit({
-        value: cell,
+        args: cell,
         event,
         selectionComplete: false}))
     }
@@ -79,9 +79,9 @@ export class CalendarBodyComponent implements OnDestroy  {
     }
 
     if (cell.compareValue != this.previewStart) {
-      this._ngZone.run(() => this.previewChange.emit({value: cell, event, selectionComplete: true}))
+      this._ngZone.run(() => this.previewChange.emit({args: cell, event, selectionComplete: true}))
     } else {
-      this._ngZone.run(() => this.selectedValueChange.emit({value: cell.compareValue, event}))
+      this._ngZone.run(() => this.selectedValueChange.emit({args: cell.compareValue, event}))
     }
   }
 
@@ -91,7 +91,7 @@ export class CalendarBodyComponent implements OnDestroy  {
       if (cell) {
         this._ngZone.run(
           () => this.previewChange.emit({
-          value: cell,
+          args: cell,
           event,
           selectionComplete: false}))
       }

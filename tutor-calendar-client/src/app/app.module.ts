@@ -45,9 +45,7 @@ import {OverlayModule} from '@angular/cdk/overlay'
       provide: NAV_DATE_FORMATS,
       useValue: NAV_MOMENT_DATE_FORMATS
     },
-    TimetablePreviewService],
-  entryComponents: [
-    TimetablePreviewComponent
+    TimetablePreviewService
   ],
   bootstrap: [AppComponent]
 })

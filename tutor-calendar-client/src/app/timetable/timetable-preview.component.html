@@ -1,3 +1,9 @@
-<div class="columns">
-
+<div class="preview-columns">
+  <app-timetable-column *ngFor="let datekey of this._getDatekeys()"
+     [slots]="_getSlotPreview(datekey)"
+     [dateKey]="datekey"
+  >
+  </app-timetable-column>
 </div>
+
+

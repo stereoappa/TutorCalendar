@@ -1,4 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core'
+import {PreviewData} from './timetable-preview.service'
+import {Slot} from './timetable-column.component'
 
 @Component({
   selector: 'app-timetable-preview',
@@ -10,8 +12,22 @@ export class TimetablePreviewComponent implements OnInit {
 
   @Input() subTitle: string
 
-  constructor() { }
+  previewData: PreviewData
+
+  constructor(previewData: PreviewData) {
+    this.previewData = previewData
+  }
 
   ngOnInit(): void {
+  }
+
+  _getDatekeys() {
+    return this.previewData.datekeys
+  }
+
+  _getSlotPreview(datekey: number): Slot[] {
+    if (this.previewData.datekey === datekey) {
+      return [new Slot(this.title, this.subTitle, null, this.previewData.position)]
+    }
   }
 }

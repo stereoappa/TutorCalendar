@@ -2,10 +2,9 @@ import {Component} from '@angular/core'
 import {DateAdapter} from '../core/date-adapter'
 import {DateRange, NavDateSelectionModel} from './date-navigator/date-selection-model'
 import {Subscription} from 'rxjs'
-import {ColumnDay, Slot, SlotPreview} from './timetable/timetable.component'
+import {ColumnDay, Slot} from './timetable/timetable-column.component'
 import {Time} from './timetable/time-model'
-import {TimetableUserEvent} from './timetable/timetable-column.component'
-import {TimetablePreviewOverlayRef, TimetablePreviewService} from './timetable/timetable-preview.service'
+import {TimetableUserEvent} from './timetable/timetable.component'
 
 @Component({
   selector: 'app-root',
@@ -15,8 +14,6 @@ import {TimetablePreviewOverlayRef, TimetablePreviewService} from './timetable/t
 export class AppComponent<D> {
   private _valueChangesSubscription = Subscription.EMPTY
 
-  _isPreviewMode: boolean | null = false
-
   _columns: ColumnDay<D>[] | null
 
   _startTimeline: Time
@@ -24,7 +21,6 @@ export class AppComponent<D> {
   _endTimeline: Time
 
   constructor(private model: NavDateSelectionModel<D>,
-              private _previewService: TimetablePreviewService,
               private _dateAdapter: DateAdapter<D>) {
     this._startTimeline = new Time(7, 0)
     this._endTimeline = new Time(23, 0)
@@ -42,14 +38,17 @@ export class AppComponent<D> {
   _initColumns(selection: D | DateRange<D> | null) {
     if (selection instanceof DateRange) {
       const range = selection as DateRange<D>
-      this._columns =
-        this._dateAdapter
-          .toArray(range.start, range.end)
-          .map(day => this._toColumnDay(day))
+      this._columns = this._dateAdapter
+        .toArray(range.start, range.end)
+        .map(day => this._toColumnDay(day))
     } else {
       const day = selection as D
       this._columns = [this._toColumnDay(day)]
     }
+  }
+
+  _handleSlotCreated(event: TimetableUserEvent<Slot>) {
+    this._columns[0].slots.push(event.args)
   }
 
   _toColumnDay(day: D): ColumnDay<D> {
@@ -65,7 +64,7 @@ export class AppComponent<D> {
       weekdays[this._dateAdapter.getDayOfWeek(day)],
       this._dateAdapter.getDateKey(day),
       day,
-      [new Slot('sdf', 'sdf', {top: 100, height: 100})])
+      [])
   }
 
   private _getColumn(dateKey: number) {
@@ -74,26 +73,5 @@ export class AppComponent<D> {
     }
     const day = this._dateAdapter.getDateByKey(dateKey)
     return this._columns.find(d => this._dateAdapter.sameDate(d.rawValue, day)) ?? null
-  }
-
-  // private _calculatePositionStyle(timeRange: TimeRange): ISlotPosition {
-  //   const timePointsRect = this.timeline.nativeElement.getBoundingClientRect()
-  //   const timePointHeightPx = Math.round(timePointsRect.height / this.timePoints.length)
-  //
-  //   const selectedTimePoint = this.timePoints.findIndex(p => p.hour === timeRange.start.hour)
-  //   return {top: 100, height: 100}
-  // }
-  _initPreviewMode(event: TimetableUserEvent<SlotPreview>) {
-    console.log('APP COMPONENT PREVIEW: ', event.value)
-    this._isPreviewMode = true
-    this._startPreview()
-  }
-
-  _startPreview() {
-    let previewRef: TimetablePreviewOverlayRef = this._previewService.open()
-
-    setTimeout(() => {
-      previewRef.close()
-    }, 20000)
   }
 }

@@ -174,7 +174,7 @@ export class NavCalendar<D> implements AfterContentInit, OnChanges {
   }
 
   _dateSelected(event: NavCalendarUserEvent<number>): void {
-    const selectedDate = this._dateAdapter.parse(event.value)
+    const selectedDate = this._dateAdapter.parse(event.args)
     this._previewStart = this._previewEnd = null
 
     this._model.updateSelection(selectedDate, this)
@@ -183,17 +183,17 @@ export class NavCalendar<D> implements AfterContentInit, OnChanges {
   _previewChanged(event: NavCalendarUserEvent<NavCalendarCell<D> | null>) {
     if (!event.selectionComplete) {
       if (!this._previewStart) {
-        this._previewStart = this._getCellCompareValue(event.value.rawValue)
+        this._previewStart = this._getCellCompareValue(event.args.rawValue)
         return
       }
 
-      this._previewEnd = this._getCellCompareValue(event.value.rawValue)
+      this._previewEnd = this._getCellCompareValue(event.args.rawValue)
       this.selected = this._createPreview()
 
       return
     }
 
-    this._previewEnd = this._getCellCompareValue(event.value.rawValue)
+    this._previewEnd = this._getCellCompareValue(event.args.rawValue)
     this._model.updateSelection(this._createPreview(), this)
 
     this._previewStart = this._previewEnd = null
