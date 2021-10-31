@@ -24,6 +24,8 @@ export class TimeRange {
               readonly end: Time | null) {
   }
 
+  static empty: TimeRange = new TimeRange(null, null)
+
   toString() {
     return `${this.start.toString()}–${this.end.toString()}`
   }

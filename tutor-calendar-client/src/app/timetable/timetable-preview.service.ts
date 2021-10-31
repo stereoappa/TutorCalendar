@@ -5,9 +5,8 @@ import {ComponentPortal} from '@angular/cdk/portal'
 import {Slot} from './timetable-column.component'
 
 export class PreviewData {
-  constructor(readonly datekeys: Array<number>,
-              readonly datekey: number,
-              readonly position: {top: number, height: number}) {
+  constructor(readonly preview: Slot,
+              readonly datekeys: Array<number>) {
   }
 }
 
@@ -16,7 +15,6 @@ export class TimetablePreviewOverlayRef {
 
   close(): void {
     this.overlayRef.detach()
-    this.overlayRef.dispose()
   }
 }
 
@@ -31,7 +29,9 @@ export class TimetablePreviewService {
 
   private _component: TimetablePreviewComponent
 
-  private _componentData: PreviewData
+  private _preview: Slot
+
+  private _datekeysPreview: number[]
 
   private _containerRef: ComponentRef<TimetablePreviewComponent>
 
@@ -40,13 +40,14 @@ export class TimetablePreviewService {
   constructor(private injector: Injector,
               private overlay: Overlay) { }
 
-  setPreview(previewData: PreviewData = null, connectedContainer: ElementRef<HTMLElement>) {
-    if (!previewData) {
+  setPreview(preview: Slot, datekeys: number[], connectedContainer: ElementRef<HTMLElement>) {
+    if (!preview || !datekeys) {
       return
     }
 
     this._connectedContainer = connectedContainer
-    this._componentData = previewData
+    this._preview = preview
+    this._datekeysPreview = datekeys
 
     if (!this._overlayRef) {
       this._overlayRef = this.createOverlay()
@@ -54,22 +55,25 @@ export class TimetablePreviewService {
 
     if (!this._component) {
       this._previewRef = new TimetablePreviewOverlayRef(this._overlayRef)
-      const injector = this.createInjector(this._componentData, this._previewRef)
+      const injector = this.createInjector(new PreviewData(this._preview, this._datekeysPreview), this._previewRef)
       this._component = this.attachPreviewContainer(this._overlayRef, injector)
     } else {
-      this._component.previewData = previewData
+      this._component.preview = preview
     }
   }
 
   getPreview(dateKey: number): Slot {
-    this._componentData = null
-    this._overlayRef.dispose()
-    this._containerRef.destroy()
-    this._previewRef = null
-    this._containerRef = null
-    const res = this._component._getSlotPreview(dateKey)[0]
-    this._component = null
+    const res = this._component._getDayPreview(dateKey)[0]
+    this._resetPreview()
     return res
+  }
+
+  private _resetPreview() {
+    this._containerRef.destroy()
+    this._containerRef = null
+    this._previewRef.close()
+    this._previewRef = null
+    this._component = null
   }
 
   private createInjector(previewData: PreviewData, previewRef: TimetablePreviewOverlayRef): Injector {
@@ -95,8 +99,6 @@ export class TimetablePreviewService {
       positionStrategy
     })
   }
-
-
 
   private attachPreviewContainer(overlayRef: OverlayRef, injector: Injector) {
     this._containerPortal = new ComponentPortal(TimetablePreviewComponent, null, injector)

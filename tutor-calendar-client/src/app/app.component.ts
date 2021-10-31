@@ -48,7 +48,10 @@ export class AppComponent<D> {
   }
 
   _handleSlotCreated(event: TimetableUserEvent<Slot>) {
-    this._columns[0].slots.push(event.args)
+    const column = this._columns.find(c => c.datekey === event.args.position.datekey)
+    if (column) {
+      column.slots.push(event.args)
+    }
   }
 
   _toColumnDay(day: D): ColumnDay<D> {

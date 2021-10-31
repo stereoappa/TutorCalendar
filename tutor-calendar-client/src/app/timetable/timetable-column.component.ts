@@ -14,20 +14,20 @@ export class ColumnDay<D = any> {
 }
 
 export interface ISlotPosition {
+  datekey: number
   top: number,
   height: number
 }
 
 export class Slot {
   constructor(readonly title: string | null,
-              readonly subTitle: string | null,
-              readonly timeRange: TimeRange | null,
-              readonly position: ISlotPosition) {
+              public timeRange: TimeRange | null,
+              public position: ISlotPosition) {
   }
 }
 
-export class TimetablePointerEventArgs {
-  constructor(public dateKey: number,
+export class TimetableColumnActionEventArgs {
+  constructor(public datekey: number,
               public clientY: number,
               public action: 'click' | 'selection' | 'selectionEnd') {
   }
@@ -42,12 +42,12 @@ const FIRING_EVENT_THRESHOLD = 5
 })
 export class TimetableColumnComponent {
 
-  @Input() dateKey: number
+  @Input() datekey: number
 
   @Input() slots: Slot[] | []
 
   @Output() readonly selectionChanged =
-    new EventEmitter<TimetableUserEvent<TimetablePointerEventArgs> | null>()
+    new EventEmitter<TimetableUserEvent<TimetableColumnActionEventArgs> | null>()
 
   private _lastMouseDownY: number | null
 
@@ -81,12 +81,12 @@ export class TimetableColumnComponent {
 
   private _emitSelectionChangedEvent = (event: MouseEvent) => {
     this._ngZone.run(() => this.selectionChanged.emit({
-      args: new TimetablePointerEventArgs(
-        this.dateKey,
+      args: new TimetableColumnActionEventArgs(
+        this.datekey,
         event.clientY,
         event.type === 'click' ? 'click' :
            event.type === 'mousemove' ? 'selection' :
-             'selectionEnd'),
+           'selectionEnd'),
       event
     }))
   }

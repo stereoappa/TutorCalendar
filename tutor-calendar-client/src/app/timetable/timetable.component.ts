@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core'
-import {Time} from './time-model'
-import {ColumnDay, Slot, TimetablePointerEventArgs} from './timetable-column.component'
-import {PreviewData, TimetablePreviewService} from './timetable-preview.service'
+import {Time, TimeRange} from './time-model'
+import {ColumnDay, ISlotPosition, Slot, TimetableColumnActionEventArgs} from './timetable-column.component'
+import {TimetablePreviewService} from './timetable-preview.service'
 
 export interface TimetableUserEvent<T> {
   args: T
@@ -33,7 +33,7 @@ export class TimetableComponent<D> implements OnInit {
 
   timePoints: Time[]
 
-  private _previewData: PreviewData
+  private _preview: Slot
 
   private _maxAvailableTime: Time
 
@@ -97,41 +97,46 @@ export class TimetableComponent<D> implements OnInit {
     return offsetPx
   }
 
-  private _previewChanged(event: TimetableUserEvent<TimetablePointerEventArgs>) {
+  private _previewChanged(event: TimetableUserEvent<TimetableColumnActionEventArgs>) {
     const precisionTime = this._getTime(event.args.clientY, this.previewPrecision)
     const precisionTopOffset = this._getTopOffset(precisionTime)
 
     if (event.args.action === 'click') { }
 
     if (event.args.action === 'selection') {
-      this._startPreview(event.args.dateKey, precisionTopOffset)
+      const position: ISlotPosition = {
+        datekey: event.args.datekey,
+        top: this._preview?.position?.top || precisionTopOffset,
+        height: precisionTopOffset - this._preview?.position?.top
+      }
+
+      this._preview = this._preview ?? new Slot(
+        '(Новое событие)',
+        TimeRange.empty,
+        position)
+
+      this._preview.timeRange = new TimeRange(this._preview.timeRange.start || precisionTime, precisionTime)
+      this._preview.position = position
+
+      this._startPreview()
     }
 
     if (event.args.action === 'selectionEnd') {
-      const newSlot = this._getSlotPreview(event.args.dateKey)
+      const slot = this._getSlotPreview(event.args.datekey)
 
       this.slotCreated.emit({
-        args: newSlot,
+        args: slot,
         event: event.event
       })
     }
   }
 
-  private _startPreview(datakey: number, topOffset: number) {
-    const position = {
-      top: this._previewData?.position?.top || topOffset,
-      height: topOffset - this._previewData?.position?.top
-    }
-
-    this._previewData = new PreviewData(
-      this.columns.map(c => c.datekey),
-      datakey,
-      position)
-
-    this._previewService.setPreview(this._previewData, this.columnsRef)
+  private _startPreview() {
+    this._previewService.setPreview(this._preview, this.columns.map(c => c.datekey), this.columnsRef)
   }
 
   private _getSlotPreview(dateKey: number): Slot {
+    this._preview = null
     return this._previewService.getPreview(dateKey)
   }
 }

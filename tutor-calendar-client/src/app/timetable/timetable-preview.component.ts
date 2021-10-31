@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core'
+import {Component} from '@angular/core'
 import {PreviewData} from './timetable-preview.service'
 import {Slot} from './timetable-column.component'
 
@@ -7,27 +7,19 @@ import {Slot} from './timetable-column.component'
   templateUrl: './timetable-preview.component.html',
   styleUrls: ['./timetable-preview.component.scss']
 })
-export class TimetablePreviewComponent implements OnInit {
-  @Input() title: string
+export class TimetablePreviewComponent {
+  datekeys: number[] | []
 
-  @Input() subTitle: string
-
-  previewData: PreviewData
+  preview: Slot
 
   constructor(previewData: PreviewData) {
-    this.previewData = previewData
+    this.preview = previewData.preview
+    this.datekeys = previewData.datekeys
   }
 
-  ngOnInit(): void {
-  }
-
-  _getDatekeys() {
-    return this.previewData.datekeys
-  }
-
-  _getSlotPreview(datekey: number): Slot[] {
-    if (this.previewData.datekey === datekey) {
-      return [new Slot(this.title, this.subTitle, null, this.previewData.position)]
+  _getDayPreview(datekey: number): Slot[] {
+    if (this.preview.position.datekey === datekey) {
+      return [this.preview]
     }
   }
 }
