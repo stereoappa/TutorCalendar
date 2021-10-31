@@ -63,6 +63,10 @@ export class TimetableColumnComponent {
   }
 
   private _columnMouseDown = (event: MouseEvent) => {
+    if (!(event.target as HTMLElement).getAttribute('data-datekey')) {
+      return
+    }
+
     this._lastMouseDownY = event.clientY
 
     this._ngZone.runOutsideAngular(() => {
@@ -80,6 +84,7 @@ export class TimetableColumnComponent {
   }
 
   private _emitSelectionChangedEvent = (event: MouseEvent) => {
+    console.log(event.type)
     this._ngZone.run(() => this.selectionChanged.emit({
       args: new TimetableColumnActionEventArgs(
         this.datekey,
@@ -89,6 +94,8 @@ export class TimetableColumnComponent {
            'selectionEnd'),
       event
     }))
+
+    this._lastMouseDownY = null
   }
 
   private _threshold = (fn: Function, threshold: number, event: MouseEvent) => {

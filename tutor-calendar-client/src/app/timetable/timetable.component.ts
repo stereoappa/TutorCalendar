@@ -1,6 +1,6 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core'
 import {Time, TimeRange} from './time-model'
-import {ColumnDay, ISlotPosition, Slot, TimetableColumnActionEventArgs} from './timetable-column.component'
+import {ColumnDay, Slot, TimetableColumnActionEventArgs} from './timetable-column.component'
 import {TimetablePreviewService} from './timetable-preview.service'
 
 export interface TimetableUserEvent<T> {
@@ -23,7 +23,7 @@ export class TimetableComponent<D> implements OnInit {
 
   @Input() timestep: number = 60
 
-  @Input() columns: ColumnDay<D>[] | null
+  @Input()  columns: ColumnDay<D>[] | null
 
   @Input() startTimeline: Time
 
@@ -97,46 +97,53 @@ export class TimetableComponent<D> implements OnInit {
     return offsetPx
   }
 
-  private _previewChanged(event: TimetableUserEvent<TimetableColumnActionEventArgs>) {
+  _previewChanged(event: TimetableUserEvent<TimetableColumnActionEventArgs>) {
     const precisionTime = this._getTime(event.args.clientY, this.previewPrecision)
-    const precisionTopOffset = this._getTopOffset(precisionTime)
 
-    if (event.args.action === 'click') { }
+    if (event.args.action === 'click') {
+      // TODO: realize it
+      return
+    }
 
     if (event.args.action === 'selection') {
-      const position: ISlotPosition = {
-        datekey: event.args.datekey,
-        top: this._preview?.position?.top || precisionTopOffset,
-        height: precisionTopOffset - this._preview?.position?.top
-      }
-
-      this._preview = this._preview ?? new Slot(
-        '(Новое событие)',
-        TimeRange.empty,
-        position)
-
-      this._preview.timeRange = new TimeRange(this._preview.timeRange.start || precisionTime, precisionTime)
-      this._preview.position = position
-
-      this._startPreview()
+      this.updatePreview(event.args.datekey, precisionTime)
+      this._previewService.init(this.columns.map(c => c.datekey), this.columnsRef)
+      this._previewService.setPreview(this._preview)
     }
 
     if (event.args.action === 'selectionEnd') {
-      const slot = this._getSlotPreview(event.args.datekey)
+      this._preview = null
 
       this.slotCreated.emit({
-        args: slot,
+        args: this._getPreviewResult(event.args.datekey),
         event: event.event
       })
     }
   }
 
-  private _startPreview() {
-    this._previewService.setPreview(this._preview, this.columns.map(c => c.datekey), this.columnsRef)
+  private updatePreview(datekey: number, time: Time) {
+    const preview = this._preview ?? new Slot(
+      '(Новое событие)',
+      TimeRange.empty,
+      null)
+
+    preview.timeRange = new TimeRange(
+      preview.timeRange.start ?? time,
+      time)
+
+    const startOffset = preview.position?.top ?? this._getTopOffset(preview.timeRange.start)
+    const height = this._getTopOffset(preview.timeRange.end) - startOffset
+
+    preview.position = {
+      datekey,
+      top: startOffset,
+      height
+    }
+
+    this._preview = preview
   }
 
-  private _getSlotPreview(dateKey: number): Slot {
-    this._preview = null
+  private _getPreviewResult(dateKey: number): Slot {
     return this._previewService.getPreview(dateKey)
   }
 }

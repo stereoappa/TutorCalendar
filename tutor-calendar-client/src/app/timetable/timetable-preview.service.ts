@@ -40,14 +40,21 @@ export class TimetablePreviewService {
   constructor(private injector: Injector,
               private overlay: Overlay) { }
 
-  setPreview(preview: Slot, datekeys: number[], connectedContainer: ElementRef<HTMLElement>) {
-    if (!preview || !datekeys) {
+  init(datekeys: number[], connectedContainer: ElementRef<HTMLElement>) {
+    if (!datekeys || !connectedContainer) {
       return
     }
 
-    this._connectedContainer = connectedContainer
-    this._preview = preview
     this._datekeysPreview = datekeys
+    this._connectedContainer = connectedContainer
+  }
+
+  setPreview(preview: Slot) {
+    if (!preview) {
+      return
+    }
+
+    this._preview = preview
 
     if (!this._overlayRef) {
       this._overlayRef = this.createOverlay()

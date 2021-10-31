@@ -27,8 +27,8 @@
       <div class="columns" #columnsContainer>
         <app-timetable-column *ngFor="let col of columns"
                               [datekey]="col.datekey"
-          [slots]="col.slots"
-          (selectionChanged)="_previewChanged($event)"
+                              [slots]="col.slots"
+                              (selectionChanged)="_previewChanged($event)"
         ></app-timetable-column>
       </div>
 
