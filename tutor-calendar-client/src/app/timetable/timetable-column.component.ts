@@ -46,8 +46,12 @@ export class TimetableColumnComponent {
 
   @Input() slots: Slot[] | []
 
+  @Input() isPreview: boolean = false
+
   @Output() readonly selectionChanged =
     new EventEmitter<TimetableUserEvent<TimetableColumnActionEventArgs> | null>()
+
+  private _startMouseDownY: number | null
 
   private _lastMouseDownY: number | null
 
@@ -56,7 +60,6 @@ export class TimetableColumnComponent {
               @Inject(DOCUMENT) private document: Document) {
     _ngZone.runOutsideAngular(() => {
         const element = _elementRef.nativeElement
-        element.addEventListener('click', this._emitSelectionChangedEvent, true)
         element.addEventListener('mousedown', this._columnMouseDown, true)
       }
     )
@@ -67,7 +70,9 @@ export class TimetableColumnComponent {
       return
     }
 
-    this._lastMouseDownY = event.clientY
+    this._lastMouseDownY = this._startMouseDownY = event.clientY
+
+    this._emitSelectionChangedEvent(event)
 
     this._ngZone.runOutsideAngular(() => {
       this.document.addEventListener('mousemove', this._mouseMoveHandler, true)
@@ -78,28 +83,41 @@ export class TimetableColumnComponent {
   private _mouseMoveHandler = (e: MouseEvent) => this._threshold(this._emitSelectionChangedEvent, FIRING_EVENT_THRESHOLD, e)
 
   private _mouseUpHandler = (e: MouseEvent) => {
+    console.log('mouseup!')
     this.document.removeEventListener('mousemove', this._mouseMoveHandler, true)
     this.document.removeEventListener('mouseup', this._mouseUpHandler, true)
     this._emitSelectionChangedEvent(e)
+
+    this._lastMouseDownY = this._startMouseDownY = null
   }
 
   private _emitSelectionChangedEvent = (event: MouseEvent) => {
-    console.log(event.type)
+    console.log(`day: ${this.datekey}`, this._lastMouseDownY, this._startMouseDownY)
+
+    let action = null
+    if (event.type === 'mouseup') {
+      action = Math.abs(this._lastMouseDownY - this._startMouseDownY) < FIRING_EVENT_THRESHOLD ? 'click' : 'selectionEnd'
+    }
+
+    if (event.type === 'mousemove' || event.type === 'mousedown') {
+      action = 'selection'
+    }
+
+    if (!action) {
+      return
+    }
+
     this._ngZone.run(() => this.selectionChanged.emit({
       args: new TimetableColumnActionEventArgs(
         this.datekey,
         event.clientY,
-        event.type === 'click' ? 'click' :
-           event.type === 'mousemove' ? 'selection' :
-           'selectionEnd'),
+        action),
       event
     }))
-
-    this._lastMouseDownY = null
   }
 
   private _threshold = (fn: Function, threshold: number, event: MouseEvent) => {
-    if (Math.abs(this._lastMouseDownY - event.clientY) > threshold) {
+    if (Math.abs((this._lastMouseDownY ?? 0) - event.clientY) > threshold) {
       this._lastMouseDownY = event.clientY
       fn(event)
     }

@@ -70,7 +70,7 @@ export class TimetablePreviewService {
   }
 
   getPreview(dateKey: number): Slot {
-    const res = this._component._getDayPreview(dateKey)[0]
+    const res = this._component._getPreviewSlot(dateKey)[0]
     this._resetPreview()
     return res
   }

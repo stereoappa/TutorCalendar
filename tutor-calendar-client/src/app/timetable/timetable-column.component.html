@@ -1,4 +1,7 @@
-<div class="day" [attr.data-datekey]="datekey">
+<div class="day"
+     [class.preview]="isPreview"
+     [attr.data-datekey]="datekey"
+>
   <div class="layout">
     <app-timetable-slot *ngFor="let slot of slots"
                         [attr.draggable]="true"

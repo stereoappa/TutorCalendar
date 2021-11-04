@@ -35,6 +35,8 @@ export class TimetableComponent<D> implements OnInit {
 
   private _preview: Slot
 
+  private _previewFixedTime: Time
+
   private _maxAvailableTime: Time
 
   get slotPrecision(): number {
@@ -69,6 +71,10 @@ export class TimetableComponent<D> implements OnInit {
 
     const selectedPointRatio = (timelineOffsetY / timePointHeightPx)
 
+    if (selectedPointRatio < 0) {
+      return this.timePoints[0]
+    }
+
     if (Math.trunc(selectedPointRatio) > this.timePoints.length - 1) {
       return this._maxAvailableTime
     }
@@ -101,8 +107,14 @@ export class TimetableComponent<D> implements OnInit {
     const precisionTime = this._getTime(event.args.clientY, this.previewPrecision)
 
     if (event.args.action === 'click') {
-      // TODO: realize it
-      return
+      this.updatePreview(event.args.datekey, precisionTime)
+      this.updatePreview(event.args.datekey, precisionTime.addMinutes(this.slotPrecision))
+      this._previewService.init(this.columns.map(c => c.datekey), this.columnsRef)
+      this._previewService.setPreview(this._preview)
+      this.slotCreated.emit({
+        args: this._getPreviewResult(event.args.datekey),
+        event: event.event
+      })
     }
 
     if (event.args.action === 'selection') {
@@ -112,8 +124,6 @@ export class TimetableComponent<D> implements OnInit {
     }
 
     if (event.args.action === 'selectionEnd') {
-      this._preview = null
-
       this.slotCreated.emit({
         args: this._getPreviewResult(event.args.datekey),
         event: event.event
@@ -127,11 +137,18 @@ export class TimetableComponent<D> implements OnInit {
       TimeRange.empty,
       null)
 
+    this._previewFixedTime = this._previewFixedTime ?? time
+
+    const directionAsc = this._previewFixedTime.toCompareValue() < preview.timeRange.end?.toCompareValue()
+
     preview.timeRange = new TimeRange(
-      preview.timeRange.start ?? time,
+      this._previewFixedTime,
       time)
 
-    const startOffset = preview.position?.top ?? this._getTopOffset(preview.timeRange.start)
+    const startOffset = directionAsc ?
+      preview.position?.top :
+      this._getTopOffset(preview.timeRange.start)
+
     const height = this._getTopOffset(preview.timeRange.end) - startOffset
 
     preview.position = {
@@ -144,6 +161,8 @@ export class TimetableComponent<D> implements OnInit {
   }
 
   private _getPreviewResult(dateKey: number): Slot {
+    this._preview = null
+    this._previewFixedTime = null
     return this._previewService.getPreview(dateKey)
   }
 }

@@ -8,6 +8,10 @@ export class Time {
     return `${this.hour}:${this.minute.toString().padStart(2, '0')}`
   }
 
+  toCompareValue(): number {
+    return (this.hour ?? 0) * 60 + (this.minute ?? 0)
+  }
+
   addMinutes(minutes: number): Time {
     return new Time(
       this.hour + Math.trunc((this.minute + minutes) / 60),
@@ -20,8 +24,19 @@ export class Time {
 }
 
 export class TimeRange {
-  constructor(readonly start: Time | null,
-              readonly end: Time | null) {
+  start: Time | null
+
+  end: Time | null
+
+  constructor(private time1: Time | null,
+              private time2: Time | null) {
+    if (time1?.toCompareValue() > time2?.toCompareValue()) {
+      this.start = time2
+      this.end = time1
+    } else {
+      this.start = time1
+      this.end = time2
+    }
   }
 
   static empty: TimeRange = new TimeRange(null, null)

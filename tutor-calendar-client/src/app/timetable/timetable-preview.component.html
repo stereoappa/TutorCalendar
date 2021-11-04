@@ -1,7 +1,8 @@
 <div class="preview-columns">
   <app-timetable-column *ngFor="let datekey of this.datekeys"
-                        [slots]="_getDayPreview(datekey)"
+                        [slots]="_getPreviewSlot(datekey)"
                         [datekey]="datekey"
+                        isPreview="true"
   >
   </app-timetable-column>
 </div>

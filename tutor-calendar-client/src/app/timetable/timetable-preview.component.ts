@@ -17,7 +17,7 @@ export class TimetablePreviewComponent {
     this.datekeys = previewData.datekeys
   }
 
-  _getDayPreview(datekey: number): Slot[] {
+  _getPreviewSlot(datekey: number): Slot[] {
     if (this.preview.position.datekey === datekey) {
       return [this.preview]
     }
