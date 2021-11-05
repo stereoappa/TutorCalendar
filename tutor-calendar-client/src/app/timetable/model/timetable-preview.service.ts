@@ -1,8 +1,8 @@
 import {ConnectionPositionPair, Overlay, OverlayConfig, OverlayRef} from '@angular/cdk/overlay'
 import {ComponentRef, ElementRef, Injectable, Injector} from '@angular/core'
-import {TimetablePreviewComponent} from './timetable-preview.component'
+import {TimetablePreview} from '../timetable-preview'
 import {ComponentPortal} from '@angular/cdk/portal'
-import {Slot} from './timetable-column.component'
+import {Slot} from '../timetable-column'
 
 export class PreviewData {
   constructor(readonly preview: Slot,
@@ -27,15 +27,15 @@ export class TimetablePreviewService {
 
   private _connectedContainer: ElementRef<HTMLElement>
 
-  private _component: TimetablePreviewComponent
+  private _component: TimetablePreview
 
   private _preview: Slot
 
   private _datekeysPreview: number[]
 
-  private _containerRef: ComponentRef<TimetablePreviewComponent>
+  private _containerRef: ComponentRef<TimetablePreview>
 
-  private _containerPortal: ComponentPortal<TimetablePreviewComponent>
+  private _containerPortal: ComponentPortal<TimetablePreview>
 
   constructor(private injector: Injector,
               private overlay: Overlay) { }
@@ -108,7 +108,7 @@ export class TimetablePreviewService {
   }
 
   private attachPreviewContainer(overlayRef: OverlayRef, injector: Injector) {
-    this._containerPortal = new ComponentPortal(TimetablePreviewComponent, null, injector)
+    this._containerPortal = new ComponentPortal(TimetablePreview, null, injector)
 
     this._containerRef = overlayRef.attach(this._containerPortal)
 

@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core'
-import {Time, TimeRange} from './time-model'
-import {ColumnDay, Slot, TimetableColumnActionEventArgs} from './timetable-column.component'
-import {TimetablePreviewService} from './timetable-preview.service'
+import {Time, TimeRange} from './model/time-model'
+import {ColumnDay, Slot, TimetableColumnActionEventArgs} from './timetable-column'
+import {TimetablePreviewService} from './model/timetable-preview.service'
 
 export interface TimetableUserEvent<T> {
   args: T
@@ -12,10 +12,10 @@ const MINUTES_PER_HOUR = 60
 
 @Component({
   selector: 'app-timetable',
-  templateUrl: './timetable.component.html',
-  styleUrls: ['./timetable.component.scss']
+  templateUrl: './timetable.html',
+  styleUrls: ['./timetable.scss']
 })
-export class TimetableComponent<D> implements OnInit {
+export class Timetable<D> implements OnInit {
 
   @ViewChild('timeline') timelineRef: ElementRef<HTMLElement>
 

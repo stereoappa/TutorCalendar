@@ -2,10 +2,10 @@ import {Component, Input, OnInit} from '@angular/core'
 
 @Component({
   selector: 'app-timetable-slot',
-  templateUrl: './timetable-slot.component.html',
-  styleUrls: ['./timetable-slot.component.scss']
+  templateUrl: './timetable-slot.html',
+  styleUrls: ['./timetable-slot.scss']
 })
-export class TimetableSlotComponent implements OnInit {
+export class TimetableSlot implements OnInit {
   @Input() title: string
 
   @Input() timeRangeTitle: string

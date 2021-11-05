@@ -1,6 +1,6 @@
 import {Component, ElementRef, EventEmitter, Inject, Input, NgZone, Output} from '@angular/core'
-import {TimetableUserEvent} from './timetable.component'
-import {TimeRange} from './time-model'
+import {TimetableUserEvent} from './timetable'
+import {TimeRange} from './model/time-model'
 import {DOCUMENT} from '@angular/common'
 
 export class ColumnDay<D = any> {
@@ -37,10 +37,10 @@ const FIRING_EVENT_THRESHOLD = 5
 
 @Component({
   selector: 'app-timetable-column',
-  templateUrl: './timetable-column.component.html',
-  styleUrls: ['./timetable-column.component.scss']
+  templateUrl: './timetable-column.html',
+  styleUrls: ['./timetable-column.scss']
 })
-export class TimetableColumnComponent {
+export class TimetableColumn {
 
   @Input() datekey: number
 

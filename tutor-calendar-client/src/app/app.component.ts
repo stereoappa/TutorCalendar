@@ -2,9 +2,9 @@ import {Component} from '@angular/core'
 import {DateAdapter} from '../core/date-adapter'
 import {DateRange, NavDateSelectionModel} from './date-navigator/date-selection-model'
 import {Subscription} from 'rxjs'
-import {ColumnDay, Slot} from './timetable/timetable-column.component'
-import {Time} from './timetable/time-model'
-import {TimetableUserEvent} from './timetable/timetable.component'
+import {ColumnDay, Slot} from './timetable/timetable-column'
+import {Time} from './timetable/model/time-model'
+import {TimetableUserEvent} from './timetable/timetable'
 
 @Component({
   selector: 'app-root',

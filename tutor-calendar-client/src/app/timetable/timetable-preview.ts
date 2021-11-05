@@ -1,13 +1,13 @@
 import {Component} from '@angular/core'
-import {PreviewData} from './timetable-preview.service'
-import {Slot} from './timetable-column.component'
+import {PreviewData} from './model/timetable-preview.service'
+import {Slot} from './timetable-column'
 
 @Component({
   selector: 'app-timetable-preview',
-  templateUrl: './timetable-preview.component.html',
-  styleUrls: ['./timetable-preview.component.scss']
+  templateUrl: './timetable-preview.html',
+  styleUrls: ['./timetable-preview.scss']
 })
-export class TimetablePreviewComponent {
+export class TimetablePreview {
   datekeys: number[] | []
 
   preview: Slot
