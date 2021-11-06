@@ -1,14 +1,4 @@
 :host {
-   width: 100%;
-}
-
-.preview-columns {
-  app-timetable-column {
-    border: red 1px solid;
-  }
-
   flex: 1 0 auto;
   display: flex;
 }
-
-

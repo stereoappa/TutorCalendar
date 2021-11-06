@@ -46,8 +46,6 @@ export class TimetableColumn {
 
   @Input() slots: Slot[] | []
 
-  @Input() isPreview: boolean = false
-
   @Output() readonly selectionChanged =
     new EventEmitter<TimetableUserEvent<TimetableColumnActionEventArgs> | null>()
 
@@ -83,7 +81,6 @@ export class TimetableColumn {
   private _mouseMoveHandler = (e: MouseEvent) => this._threshold(this._emitSelectionChangedEvent, FIRING_EVENT_THRESHOLD, e)
 
   private _mouseUpHandler = (e: MouseEvent) => {
-    console.log('mouseup!')
     this.document.removeEventListener('mousemove', this._mouseMoveHandler, true)
     this.document.removeEventListener('mouseup', this._mouseUpHandler, true)
     this._emitSelectionChangedEvent(e)
@@ -92,15 +89,15 @@ export class TimetableColumn {
   }
 
   private _emitSelectionChangedEvent = (event: MouseEvent) => {
-    console.log(`day: ${this.datekey}`, this._lastMouseDownY, this._startMouseDownY)
-
     let action = null
     if (event.type === 'mouseup') {
       action = Math.abs(this._lastMouseDownY - this._startMouseDownY) < FIRING_EVENT_THRESHOLD ? 'click' : 'selectionEnd'
+      this.document.body.removeAttribute('data-preview-mode')
     }
 
     if (event.type === 'mousemove' || event.type === 'mousedown') {
       action = 'selection'
+      this.document.body.setAttribute('data-preview-mode', 'true')
     }
 
     if (!action) {

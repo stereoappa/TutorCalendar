@@ -1,10 +1,7 @@
-<div class="preview-columns">
-  <app-timetable-column *ngFor="let datekey of this.datekeys"
-                        [slots]="_getPreviewSlot(datekey)"
-                        [datekey]="datekey"
-                        isPreview="true"
-  >
-  </app-timetable-column>
-</div>
+<app-timetable-column *ngFor="let datekey of this.datekeys"
+                      [slots]="_getPreviewSlot(datekey)"
+                      [datekey]="datekey"
+></app-timetable-column>
+
 
 

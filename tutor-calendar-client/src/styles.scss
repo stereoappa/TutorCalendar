@@ -11,6 +11,10 @@ html, body, #app, :root{
   height: 100%;
   font-size: 14px;
   font-family: Roboto,Helvetica,Arial,sans-serif;
+
+  [data-preview-mode] {
+    cursor: move;
+  }
 }
 
 .calendar__workspace {
@@ -18,10 +22,6 @@ html, body, #app, :root{
   display: flex;
 
   height: calc(100% - #{$header-height});
-}
-
-.mr-6 {
-  margin-right: 6px;
 }
 
 .w-100 {
