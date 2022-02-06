@@ -1,0 +1,116 @@
+@import "mixins";
+
+.modal-layer {
+}
+
+.modal-layer.open .modal-overlay,
+.modal-layer.open .modal-window {
+
+  opacity: 1;
+  z-index: 1005;
+}
+
+.modal-layer.hide .modal-overlay,
+.modal-layer.hide .modal-window {
+  opacity: 1;
+  z-index: 1005;
+}
+
+//.modal-overlay, .modal-window {
+//  opacity: 0;
+//  z-index: -1;
+//}
+
+
+.modal-window {
+  width: 448px;
+  border-radius: 8px;
+  background: #fff;
+  transition: opacity 200ms ease-in-out;
+  box-shadow: 0 24px 38px 3px rgba(0, 0, 0, 0.14), 0 9px 46px 8px rgba(0, 0, 0, 0.12), 0 11px 15px -7px rgba(0, 0, 0, 0.2);
+
+
+  height: 531px;
+
+
+  .modal-header {
+    //font-size: 1.5rem;
+
+    .modal-close {
+      cursor: pointer;
+    }
+  }
+
+
+  .modal-header {
+    padding: 5px 10px;
+    display: flex;
+    justify-content: space-between;
+    background-color: #f1f3f4;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+
+    cursor: move;
+  }
+
+  .modal-body {
+    padding: 10px;
+
+    .row {
+      align-items: center;
+      display: flex;
+      margin: 2px 16px 0;
+
+      .icon-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 36px;
+        height: 36px;
+        padding-right: 8px;
+
+        i {
+          color: #5f6368;
+          fill: #5f6368;
+          font-size: 20px;
+          pointer-events: none;
+          user-select: none;
+        }
+      }
+
+      .field {
+        border-radius: 4px;
+
+        &:hover {
+          background-color: rgba(32, 33, 36, 0.039);
+        }
+      }
+
+      .title {
+        flex: 1 1 auto;
+        padding: 8px 0 21px 37px;
+        @include input(100%, 22px, 1px solid #dadce0);
+      }
+
+      .field.date {
+        @include input(195px);
+      }
+
+      .field.time {
+        @include input(54px);
+      }
+    }
+  }
+
+  .modal-footer {
+    padding: 5px 10px;
+  }
+}
+
+
+
+
+
+
+
