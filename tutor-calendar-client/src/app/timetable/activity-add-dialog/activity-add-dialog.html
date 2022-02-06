@@ -1,0 +1,55 @@
+<div
+  cdkDrag
+  cdkDragBoundary="body"
+  cdkDragRootElement=".cdk-overlay-pane"
+  class="modal-window"
+  data-modal="window">
+  <div
+    mat-dialog-title
+    class="modal-header"
+    data-modal="header"
+    cdkDragHandle>
+    <span></span>
+    <span (click)="onCloseClick()" class="modal-close" data-close="true">&times;</span>
+  </div>
+  <div mat-dialog-content class="modal-body" data-modal="body">
+    <div class="modal-content">
+      <div class="row">
+        <div class="title">
+          <input matInput [(ngModel)]="data.slot.title" data-model="title" placeholder="Добавьте название" type="text" />
+          <span class="bar"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="icon-wrapper">
+        <i class="material-icons">access_time</i>
+      </div>
+
+      <div class="field date">
+        <div class="group">
+          <input class="datepicker" data-model="date" type="text"/>
+          <span class="bar"></span>
+        </div>
+      </div>
+
+      <div class="field time">
+        <div class="group">
+          <input data-model="timeStart" [(ngModel)]="data.slot.timeRange.start"/>
+          <span class="bar"></span>
+        </div>
+      </div>
+      <span>–</span>
+      <div class="field time">
+        <div class="group">
+          <input data-model="timeEnd" [(ngModel)]="data.slot.timeRange.end"/>
+          <span class="bar"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div mat-dialog-actions class="modal-footer" data-modal="footer">
+    <button mat-button [mat-dialog-close]="data" cdkFocusInitial data-save="true">Сохранить</button>
+  </div>
+</div>

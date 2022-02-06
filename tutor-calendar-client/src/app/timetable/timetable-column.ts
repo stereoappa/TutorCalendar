@@ -20,9 +20,10 @@ export interface ISlotPosition {
 }
 
 export class Slot {
-  constructor(readonly title: string | null,
+  constructor(public title: string | null,
               public timeRange: TimeRange | null,
               public position: ISlotPosition) {
+      title = title || 'Новое событие'
   }
 }
 

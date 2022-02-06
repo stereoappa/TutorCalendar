@@ -15,6 +15,11 @@ import { TimetableColumn } from './timetable/timetable-column'
 import { TimetablePreview } from './timetable/timetable-preview'
 import {TimetablePreviewService} from './timetable/model/timetable-preview.service'
 import {OverlayModule} from '@angular/cdk/overlay'
+import { ActivityAddDialog } from './timetable/activity-add-dialog/activity-add-dialog'
+import {MatDialogModule} from '@angular/material/dialog'
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
+import {DragDropModule} from '@angular/cdk/drag-drop'
+import {FormsModule} from '@angular/forms'
 
 @NgModule({
     declarations: [
@@ -24,12 +29,17 @@ import {OverlayModule} from '@angular/cdk/overlay'
         Timetable,
         TimetableSlot,
         TimetableColumn,
-        TimetablePreview
+        TimetablePreview,
+        ActivityAddDialog
     ],
   imports: [
     BrowserModule,
     SharedModule,
-    OverlayModule
+    OverlayModule,
+    MatDialogModule,
+    DragDropModule,
+    BrowserAnimationsModule,
+    FormsModule
   ],
   providers: [
     {

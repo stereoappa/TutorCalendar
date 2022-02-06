@@ -2,6 +2,8 @@ import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} f
 import {Time, TimeRange} from './model/time-model'
 import {ColumnDay, Slot, TimetableColumnActionEventArgs} from './timetable-column'
 import {TimetablePreviewService} from './model/timetable-preview.service'
+import {MatDialog} from '@angular/material/dialog'
+import {ActivityAddDialog} from './activity-add-dialog/activity-add-dialog'
 
 export interface TimetableUserEvent<T> {
   args: T
@@ -47,7 +49,8 @@ export class Timetable<D> implements OnInit {
     return this.timestep / 4
   }
 
-  constructor(private readonly _previewService: TimetablePreviewService) { }
+  constructor(private readonly _previewService: TimetablePreviewService,
+              private activityDialog: MatDialog) { }
 
   ngOnInit(): void {
     this._createTimePoints()
@@ -111,10 +114,14 @@ export class Timetable<D> implements OnInit {
       this.updatePreview(event.args.datekey, precisionTime.addMinutes(this.slotPrecision))
       this._previewService.init(this.columns.map(c => c.datekey), this.columnsRef)
       this._previewService.setPreview(this._preview)
-      this.slotCreated.emit({
-        args: this._getPreviewResult(event.args.datekey),
-        event: event.event
-      })
+      const slot = this._getPreviewResult(event.args.datekey)
+
+      // this.slotCreated.emit({
+      //   args: slot,
+      //   event: event.event
+      // })
+
+      this._openActivityAddModalWindow(slot, event)
     }
 
     if (event.args.action === 'selection') {
@@ -124,10 +131,13 @@ export class Timetable<D> implements OnInit {
     }
 
     if (event.args.action === 'selectionEnd') {
+      const slot = this._getPreviewResult(event.args.datekey)
       this.slotCreated.emit({
-        args: this._getPreviewResult(event.args.datekey),
+        args: slot,
         event: event.event
       })
+
+      this._openActivityAddModalWindow(slot, event)
     }
   }
 
@@ -164,5 +174,24 @@ export class Timetable<D> implements OnInit {
     this._preview = null
     this._previewFixedTime = null
     return this._previewService.getPreview(dateKey)
+  }
+
+  private _openActivityAddModalWindow(slot: Slot, event: TimetableUserEvent<TimetableColumnActionEventArgs>) {
+
+    const dialogRef = this.activityDialog.open(ActivityAddDialog, {
+      panelClass: 'dialog-container',
+      data: {
+        slot
+      }
+    })
+
+    dialogRef.afterClosed().subscribe(data => {
+      console.log(data)
+
+      this.slotCreated.emit({
+        args: data.slot,
+        event: event.event
+      })
+    })
   }
 }
