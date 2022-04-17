@@ -70,12 +70,10 @@ export class TimetablePreviewService {
   }
 
   getPreview(dateKey: number): Slot {
-    const res = this._component._getPreviewSlot(dateKey)[0]
-    this._resetPreview()
-    return res
+    return this._component._getPreviewSlot(dateKey)[0]
   }
 
-  private _resetPreview() {
+  resetPreview() {
     this._containerRef.destroy()
     this._containerRef = null
     this._previewRef.close()

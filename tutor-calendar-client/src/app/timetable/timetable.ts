@@ -4,6 +4,7 @@ import {ColumnDay, Slot, TimetableColumnActionEventArgs} from './timetable-colum
 import {TimetablePreviewService} from './model/timetable-preview.service'
 import {MatDialog} from '@angular/material/dialog'
 import {ActivityAddDialog} from './activity-add-dialog/activity-add-dialog'
+import {ActivityAddDialogData, ActivityAddDialogResult} from './activity-add-dialog/activity-dialog-model'
 
 export interface TimetableUserEvent<T> {
   args: T
@@ -50,7 +51,7 @@ export class Timetable<D> implements OnInit {
   }
 
   constructor(private readonly _previewService: TimetablePreviewService,
-              private activityDialog: MatDialog) { }
+              private dialogService: MatDialog) { }
 
   ngOnInit(): void {
     this._createTimePoints()
@@ -106,42 +107,43 @@ export class Timetable<D> implements OnInit {
     return offsetPx
   }
 
-  _previewChanged(event: TimetableUserEvent<TimetableColumnActionEventArgs>) {
+  async _previewChanged(event: TimetableUserEvent<TimetableColumnActionEventArgs>) {
     const precisionTime = this._getTime(event.args.clientY, this.previewPrecision)
 
-    if (event.args.action === 'click') {
-      this.updatePreview(event.args.datekey, precisionTime)
-      this.updatePreview(event.args.datekey, precisionTime.addMinutes(this.slotPrecision))
+    if (event.args.action === 'selection') {
+      this._updatePreview(event.args.datekey, precisionTime)
       this._previewService.init(this.columns.map(c => c.datekey), this.columnsRef)
       this._previewService.setPreview(this._preview)
-      const slot = this._getPreviewResult(event.args.datekey)
-
-      // this.slotCreated.emit({
-      //   args: slot,
-      //   event: event.event
-      // })
-
-      this._openActivityAddModalWindow(slot, event)
+      return
     }
 
-    if (event.args.action === 'selection') {
-      this.updatePreview(event.args.datekey, precisionTime)
+    let dialogResult: ActivityAddDialogResult
+
+    if (event.args.action === 'click') {
+      this._updatePreview(event.args.datekey, precisionTime)
+      this._updatePreview(event.args.datekey, precisionTime.addMinutes(this.slotPrecision))
       this._previewService.init(this.columns.map(c => c.datekey), this.columnsRef)
       this._previewService.setPreview(this._preview)
+      const slotPreview = this._getPreviewResult(event.args.datekey)
+      dialogResult = await this._openActivityAddModalWindow({ slot: slotPreview })
     }
 
     if (event.args.action === 'selectionEnd') {
-      const slot = this._getPreviewResult(event.args.datekey)
+      const slotPreview = this._getPreviewResult(event.args.datekey)
+      dialogResult = await this._openActivityAddModalWindow({ slot: slotPreview })
+    }
+
+    if (dialogResult) {
       this.slotCreated.emit({
-        args: slot,
+        args: dialogResult.slot,
         event: event.event
       })
-
-      this._openActivityAddModalWindow(slot, event)
     }
+
+    this._clearPreview()
   }
 
-  private updatePreview(datekey: number, time: Time) {
+  private _updatePreview(datekey: number, time: Time) {
     const preview = this._preview ?? new Slot(
       '(Новое событие)',
       TimeRange.empty,
@@ -171,27 +173,25 @@ export class Timetable<D> implements OnInit {
   }
 
   private _getPreviewResult(dateKey: number): Slot {
-    this._preview = null
-    this._previewFixedTime = null
     return this._previewService.getPreview(dateKey)
   }
 
-  private _openActivityAddModalWindow(slot: Slot, event: TimetableUserEvent<TimetableColumnActionEventArgs>) {
+  private _clearPreview() {
+    this._preview = null
+    this._previewFixedTime = null
+    this._previewService.resetPreview()
+  }
 
-    const dialogRef = this.activityDialog.open(ActivityAddDialog, {
+  private async _openActivityAddModalWindow(data: ActivityAddDialogData): Promise<ActivityAddDialogResult> {
+    const dialogRef = this.dialogService.open(ActivityAddDialog, {
       panelClass: 'dialog-container',
-      data: {
-        slot
-      }
+      data
     })
 
-    dialogRef.afterClosed().subscribe(data => {
-      console.log(data)
-
-      this.slotCreated.emit({
-        args: data.slot,
-        event: event.event
+    return await dialogRef.afterClosed()
+      .toPromise<ActivityAddDialogResult>()
+      .then(result => {
+        return Promise.resolve(result)
       })
-    })
   }
 }

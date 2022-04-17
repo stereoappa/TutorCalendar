@@ -1,5 +1,9 @@
 import {Slot} from '../timetable-column'
 
-export interface ActivityDialogData {
+export interface ActivityAddDialogData {
   slot: Slot
+}
+
+export class ActivityAddDialogResult {
+  constructor(public slot: Slot) { }
 }

@@ -1,6 +1,6 @@
 import {Component, Inject} from '@angular/core'
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog'
-import {ActivityDialogData} from './activity-dialog-model'
+import {ActivityAddDialogData, ActivityAddDialogResult} from './activity-dialog-model'
 
 @Component({
   selector: 'app-activity-add-dialog',
@@ -11,10 +11,18 @@ export class ActivityAddDialog {
 
   constructor(
     public dialogRef: MatDialogRef<ActivityAddDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: ActivityDialogData) {
+    @Inject(MAT_DIALOG_DATA) public data: ActivityAddDialogData) {
   }
 
-  onCloseClick(): void {
+  timeChanged($event: any) {
+    console.log('time changed', $event)
+  }
+
+  cancel(): void {
     this.dialogRef.close()
+  }
+
+  save() {
+    this.dialogRef.close(new ActivityAddDialogResult(this.data.slot))
   }
 }
