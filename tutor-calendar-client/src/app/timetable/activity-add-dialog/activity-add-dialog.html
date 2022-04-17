@@ -10,7 +10,7 @@
     data-modal="header"
     cdkDragHandle>
     <span></span>
-    <span (click)="onCloseClick()" class="modal-close" data-close="true">&times;</span>
+    <span (click)="cancel()" class="modal-close" data-close="true">&times;</span>
   </div>
   <div mat-dialog-content class="modal-body" data-modal="body">
     <div class="modal-content">
@@ -36,7 +36,7 @@
 
       <div class="field time">
         <div class="group">
-          <input data-model="timeStart" [(ngModel)]="data.slot.timeRange.start"/>
+          <input data-model="timeStart" [(ngModel)]="data.slot.timeRange.start" (ngModelChange)="timeChanged($event)"/>
           <span class="bar"></span>
         </div>
       </div>
@@ -50,6 +50,6 @@
     </div>
   </div>
   <div mat-dialog-actions class="modal-footer" data-modal="footer">
-    <button mat-button [mat-dialog-close]="data" cdkFocusInitial data-save="true">Сохранить</button>
+    <button mat-button (click)="save()" cdkFocusInitial data-save="true">Сохранить</button>
   </div>
 </div>
