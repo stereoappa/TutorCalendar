@@ -1,10 +1,13 @@
 import {NgModule} from '@angular/core'
 import {CommonModule} from '@angular/common'
-import {DateNavigatorModule} from '../date-navigator/date-navigator.module'
+import {DateNavigatorModule} from '../date-navigator/date-navigator.module';
+import { DropdownInputComponent } from './dropdown-input/dropdown-input.component'
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    DropdownInputComponent
+  ],
   imports: [CommonModule, DateNavigatorModule],
-  exports: [CommonModule, DateNavigatorModule]
+  exports: [CommonModule, DateNavigatorModule, DropdownInputComponent]
 })
 export class SharedModule { }

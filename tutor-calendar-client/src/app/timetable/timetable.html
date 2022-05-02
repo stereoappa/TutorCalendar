@@ -12,14 +12,14 @@
   <div class="row">
     <div class="table-container">
       <div class="timeline" data-role="timeline" #timeline>
-        <div *ngFor="let point of timePoints"
+        <div *ngFor="let point of timelineBase"
              class="time-point"
              data-time-point="{{point.toString()}}">{{point.toString()}}
         </div>
       </div>
 
       <div class="grid">
-        <div role="row" *ngFor="let point of timePoints"></div>
+        <div role="row" *ngFor="let point of timelineBase"></div>
       </div>
 
       <div class="vertical-grid-line line-delta"></div>

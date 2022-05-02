@@ -5,6 +5,7 @@ import {TimetablePreviewService} from './model/timetable-preview.service'
 import {MatDialog} from '@angular/material/dialog'
 import {ActivityAddDialog} from './activity-add-dialog/activity-add-dialog'
 import {ActivityAddDialogData, ActivityAddDialogResult} from './activity-add-dialog/activity-dialog-model'
+import {TimelineService} from './model/timeline.service'
 
 export interface TimetableUserEvent<T> {
   args: T
@@ -24,69 +25,44 @@ export class Timetable<D> implements OnInit {
 
   @ViewChild('columnsContainer') columnsRef: ElementRef<HTMLElement>
 
-  @Input() timestep: number = 60
-
   @Input()  columns: ColumnDay<D>[] | null
-
-  @Input() startTimeline: Time
-
-  @Input() endTimeline: Time
 
   @Output() readonly slotCreated = new EventEmitter<TimetableUserEvent<Slot>>()
 
-  timePoints: Time[]
+  timelineBase: Time[]
 
   private _preview: Slot
 
   private _previewFixedTime: Time
 
-  private _maxAvailableTime: Time
-
-  get slotPrecision(): number {
-    return this.timestep / 2
-  }
-
-  get previewPrecision(): number {
-    return this.timestep / 4
-  }
-
-  constructor(private readonly _previewService: TimetablePreviewService,
+  constructor(private readonly _timelineService: TimelineService,
+              private readonly _previewService: TimetablePreviewService,
               private dialogService: MatDialog) { }
 
   ngOnInit(): void {
-    this._createTimePoints()
-    this._maxAvailableTime = this.endTimeline.addMinutes(this.timestep)
+    this.timelineBase = this._timelineService.timelineBase
   }
 
-  _createTimePoints() {
-    const scale = [this.startTimeline.clone()]
-    const lastTimePoint = () => scale[scale.length - 1]
-    while (lastTimePoint().hour < this.endTimeline.hour) {
-      scale.push(lastTimePoint().addMinutes(this.timestep))
-    }
-    this.timePoints = scale
-  }
-
-  private _getTime(clientY: number, precision: number = this.slotPrecision): Time | null {
+  private _getTime(clientY: number, precision: number = this._timelineService.slotPrecision): Time | null {
     const timePointsRect = this.timelineRef.nativeElement.getBoundingClientRect()
 
     const timelineOffsetY = Math.floor(clientY - timePointsRect.top)
-    const timePointHeightPx = Math.round(timePointsRect.height / this.timePoints.length)
+    const timePointHeightPx = Math.round(timePointsRect.height / this.timelineBase.length)
 
     const selectedPointRatio = (timelineOffsetY / timePointHeightPx)
 
     if (selectedPointRatio < 0) {
-      return this.timePoints[0]
+      return this.timelineBase[0]
     }
 
-    if (Math.trunc(selectedPointRatio) > this.timePoints.length - 1) {
-      return this._maxAvailableTime
+    if (Math.trunc(selectedPointRatio) > this.timelineBase.length - 1) {
+      return this._timelineService.maxUnderlineTime
     }
 
-    const selectedTimePoint = this.timePoints[Math.trunc(selectedPointRatio)]
+    const selectedTimePoint = this.timelineBase[Math.trunc(selectedPointRatio)]
 
     const selectedPointMinuteRatio = selectedPointRatio - Math.trunc(selectedPointRatio)
-    const selectedMinutes = Math.trunc(selectedPointMinuteRatio % 1 * this.timestep)
+    const selectedMinutes = Math.trunc(selectedPointMinuteRatio % 1 * this._timelineService.timestep)
 
     const selectedTime = selectedTimePoint.addMinutes(selectedMinutes)
 
@@ -98,17 +74,17 @@ export class Timetable<D> implements OnInit {
   private _getTopOffset(time: Time): number {
     const timePointsRect = this.timelineRef.nativeElement.getBoundingClientRect()
 
-    const timePointHeightPx = Math.round(timePointsRect.height / this.timePoints.length)
+    const timePointHeightPx = Math.round(timePointsRect.height / this.timelineBase.length)
 
-    const minutesOffset = (time.hour - this.startTimeline.hour) * MINUTES_PER_HOUR + time.minute
+    const minutesOffset = (time.hour - this.timelineBase[0].hour) * MINUTES_PER_HOUR + time.minute
 
-    const offsetPx = minutesOffset * timePointHeightPx / this.timestep
+    const offsetPx = minutesOffset * timePointHeightPx / this._timelineService.timestep
 
     return offsetPx
   }
 
   async _previewChanged(event: TimetableUserEvent<TimetableColumnActionEventArgs>) {
-    const precisionTime = this._getTime(event.args.clientY, this.previewPrecision)
+    const precisionTime = this._getTime(event.args.clientY, this._timelineService.previewPrecision)
 
     if (event.args.action === 'selection') {
       this._updatePreview(event.args.datekey, precisionTime)
@@ -121,7 +97,7 @@ export class Timetable<D> implements OnInit {
 
     if (event.args.action === 'click') {
       this._updatePreview(event.args.datekey, precisionTime)
-      this._updatePreview(event.args.datekey, precisionTime.addMinutes(this.slotPrecision))
+      this._updatePreview(event.args.datekey, precisionTime.addMinutes(this._timelineService.slotPrecision))
       this._previewService.init(this.columns.map(c => c.datekey), this.columnsRef)
       this._previewService.setPreview(this._preview)
       const slotPreview = this._getPreviewResult(event.args.datekey)
@@ -145,7 +121,7 @@ export class Timetable<D> implements OnInit {
 
   private _updatePreview(datekey: number, time: Time) {
     const preview = this._preview ?? new Slot(
-      '(Новое событие)',
+      '',
       TimeRange.empty,
       null)
 
@@ -189,7 +165,7 @@ export class Timetable<D> implements OnInit {
     })
 
     return await dialogRef.afterClosed()
-      .toPromise<ActivityAddDialogResult>()
+      .toPromise()
       .then(result => {
         return Promise.resolve(result)
       })

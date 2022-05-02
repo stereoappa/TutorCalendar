@@ -5,10 +5,7 @@
   ></app-sidebar>
 
   <app-timetable
-    [timestep]="60"
     [columns]="_columns"
-    [startTimeline]="_startTimeline"
-    [endTimeline]="_endTimeline"
     (slotCreated)="_handleSlotCreated($event)"
   ></app-timetable>
 
