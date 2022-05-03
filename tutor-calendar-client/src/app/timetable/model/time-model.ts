@@ -4,6 +4,16 @@ export class Time {
               public second?: number | 0) {
   }
 
+  static createByString(str: string) {
+    const arr = str.split(':')
+
+    if (arr.length != 2) {
+      return undefined
+    }
+
+    return new Time(parseInt(arr[0].trim()), parseInt(arr[1].trim()))
+  }
+
   toString() {
     return `${this.hour}:${this.minute.toString().padStart(2, '0')}`
   }

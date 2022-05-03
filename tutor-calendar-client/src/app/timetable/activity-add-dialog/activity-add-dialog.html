@@ -19,7 +19,7 @@
         <div class="title">
           <input matInput
                  [(ngModel)]="_data.title"
-                 (focusout)="updateInitialData()"
+                 (focusout)="updateInitialData($event)"
                  data-model="title"
                  placeholder="Добавьте название"
                  type="text" />
@@ -41,23 +41,25 @@
       </div>
 
       <div class="field time">
+
         <div class="group">
           <app-dropdown-input
-            options=""
+            [(ngModel)]="_data.timeRange.start"
+            (ngModelChange)="updateInitialData($event)"
+            [converter]="convertToTime"
+            [options]="_times"
           ></app-dropdown-input>
 
-          <input data-model="timeStart"
-                 [(ngModel)]="_data.timeRange.start"
-                 (focusout)="updateInitialData()" />
           <span class="bar"></span>
         </div>
       </div>
       <span>–</span>
       <div class="field time">
         <div class="group">
-          <input data-model="timeEnd"
-                 [(ngModel)]="_data.timeRange.end"
-                 (focusout)="updateInitialData()" />
+          <app-dropdown-input
+            [(ngModel)]="_data.timeRange.end"
+            [options]="_times"
+          ></app-dropdown-input>
           <span class="bar"></span>
         </div>
       </div>

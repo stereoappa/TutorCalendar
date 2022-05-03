@@ -2,6 +2,8 @@ import {Component, Inject} from '@angular/core'
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog'
 import {ActivityAddDialogData, ActivityAddDialogResult} from './activity-dialog-model'
 import {Slot} from '../timetable-column'
+import {TimelineService} from '../model/timeline.service'
+import {Time} from '../model/time-model'
 
 @Component({
   selector: 'app-activity-add-dialog',
@@ -10,15 +12,17 @@ import {Slot} from '../timetable-column'
 })
 export class ActivityAddDialog {
   _data: Slot
+  _times: string[]
 
   constructor(
     public dialogRef: MatDialogRef<ActivityAddDialog>,
-    @Inject(MAT_DIALOG_DATA) private initialData: ActivityAddDialogData) {
+    @Inject(MAT_DIALOG_DATA) private initialData: ActivityAddDialogData,
+    private readonly _timelineService: TimelineService) {
     this._data = initialData.slot.copy()
-    console.log(this._data)
+    this._times = _timelineService.createTimeline(_timelineService.previewPrecision).map(t => t.toString())
   }
 
-  updateInitialData() {
+  updateInitialData($event: any) {
     this.initialData.slot.title = this._data.title
     this.initialData.slot.timeRange.start = this._data.timeRange.start
     this.initialData.slot.timeRange.end = this._data.timeRange.end
@@ -29,7 +33,7 @@ export class ActivityAddDialog {
   }
 
   save() {
-    this.updateInitialData()
+    this.updateInitialData(null)
     this.dialogRef.close(new ActivityAddDialogResult(this.initialData.slot))
   }
 
@@ -37,8 +41,7 @@ export class ActivityAddDialog {
     return true
   }
 
-
-  getTitle() {
-    return this._data.title
+  convertToTime(value: string): Time {
+    return Time.createByString(value)
   }
 }
