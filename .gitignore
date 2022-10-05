@@ -1,42 +1,16 @@
-## tutor-calendar-client
+# Common
+.idea
+package-lock.json
+*.pfx
+
+# tutor-calendar-client
 tutor-calendar-client/dist
+tutor-calendar-client/node_modules
 tutor-calendar-client/tmp
 tutor-calendar-client/out-tsc
-# Only exists if Bazel was run
-tutor-calendar-client/bazel-out
-
-# dependencies
-tutor-calendar-client/node_modules
-
-# IDEs and editors
-.idea
-.angular
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.history/*
-
-# misc
-/.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
-npm-debug.log
-yarn-error.log
-package-lock.json
-testem.log
-/typings
+tutor-calendar-client/.angular
+tutor-calendar-client/npm-debug.log
+tutor-calendar-client/yarn-error.log
 
 # System Files
-.DS_Store
 Thumbs.db
