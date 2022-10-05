@@ -1,21 +1,16 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
-
-# compiled output
-/dist
-/tmp
-/out-tsc
+## tutor-calendar-client
+tutor-calendar-client/dist
+tutor-calendar-client/tmp
+tutor-calendar-client/out-tsc
 # Only exists if Bazel was run
-/bazel-out
+tutor-calendar-client/bazel-out
 
 # dependencies
-/node_modules
-
-# profiling files
-chrome-profiler-events*.json
-speed-measure-plugin*.json
+tutor-calendar-client/node_modules
 
 # IDEs and editors
-/.idea
+.idea
+.angular
 .project
 .classpath
 .c9/
@@ -38,6 +33,7 @@ speed-measure-plugin*.json
 /libpeerconnection.log
 npm-debug.log
 yarn-error.log
+package-lock.json
 testem.log
 /typings
 
