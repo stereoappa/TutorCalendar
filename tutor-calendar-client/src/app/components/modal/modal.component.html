@@ -1,0 +1,25 @@
+<div
+  cdkDrag
+  cdkDragBoundary="body"
+  cdkDragRootElement=".cdk-overlay-pane"
+  class="modal-window"
+  data-modal="window">
+  <div
+    mat-dialog-title
+    class="modal-header"
+    data-modal="header"
+    cdkDragHandle>
+    <span></span>
+    <span (click)="cancel()" class="modal-close" data-close="true">&times;</span>
+  </div>
+
+  <div mat-dialog-content class="modal-body" data-modal="body">
+    <div class="modal-content">
+      <ng-content></ng-content>
+    </div>
+  </div>
+
+  <div mat-dialog-actions class="modal-footer" data-modal="footer">
+    <button mat-button (click)="save()" cdkFocusInitial data-save="true">Сохранить</button>
+  </div>
+</div>

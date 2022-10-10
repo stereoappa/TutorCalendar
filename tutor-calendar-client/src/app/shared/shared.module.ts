@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core'
 import {CommonModule} from '@angular/common'
-import {DateNavigatorModule} from '../date-navigator/date-navigator.module';
+import {DateNavigatorModule} from '../components/date-navigator/date-navigator.module';
 import { DropdownInputComponent } from './dropdown-input/dropdown-input.component'
 import {FormsModule} from '@angular/forms'
 

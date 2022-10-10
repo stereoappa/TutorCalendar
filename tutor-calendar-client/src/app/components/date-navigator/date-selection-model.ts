@@ -1,5 +1,5 @@
 import {FactoryProvider, Injectable, Optional, SkipSelf } from '@angular/core'
-import {DateAdapter} from '../../core/date-adapter'
+import {DateAdapter} from '../../../core/date-adapter'
 import {Observable, Subject} from 'rxjs'
 
 export class DateRange<D> {

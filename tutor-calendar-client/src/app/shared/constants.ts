@@ -1,5 +1,5 @@
 import {InjectionToken} from '@angular/core'
-import {Time} from '../timetable/model/time-model'
+import {Time} from '../components/timetable/model/time-model'
 
 const TIMELINE_STEP_VALUE = 60
 const START_TIMELINE_VALUE = new Time(7, 0)

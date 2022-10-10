@@ -2,7 +2,7 @@ import {Component, Inject} from '@angular/core'
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog'
 import {ActivityAddDialogData, ActivityAddDialogResult} from './activity-dialog-model'
 import {Slot} from '../timetable-column'
-import {TimelineService} from '../model/timeline.service'
+import {TimelineService} from '../../../services/timeline.service'
 import {Time} from '../model/time-model'
 
 @Component({

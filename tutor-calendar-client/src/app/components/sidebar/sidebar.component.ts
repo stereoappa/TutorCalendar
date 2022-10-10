@@ -1,6 +1,6 @@
 import {Component, OnChanges, OnInit, SimpleChanges} from '@angular/core'
 import {DateRange, NavDateSelectionModel} from '../date-navigator/date-selection-model'
-import {DateAdapter} from '../../core/date-adapter'
+import {DateAdapter} from '../../../core/date-adapter'
 
 @Component({
   selector: 'app-sidebar',

@@ -8,10 +8,10 @@ import {
   Optional,
   SimpleChanges
 } from '@angular/core'
-import {DateAdapter} from '../../core/date-adapter'
+import {DateAdapter} from '../../../core/date-adapter'
 import {DateRange, NavDateSelectionModel} from './date-selection-model'
 import {NavCalendarCell, NavCalendarUserEvent} from './nav-calendar-body'
-import {DateFormats, NAV_DATE_FORMATS} from '../../core/date-formats'
+import {DateFormats, NAV_DATE_FORMATS} from '../../../core/date-formats'
 
 const DAYS_PER_WEEK = 7
 

@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core'
-import {END_TIMELINE, START_TIMELINE, TIMELINE_STEP} from '../../shared/constants'
-import {Time} from './time-model'
+import {END_TIMELINE, START_TIMELINE, TIMELINE_STEP} from '../shared/constants'
+import {Time} from '../components/timetable/model/time-model'
 
 @Injectable({providedIn: 'root'})
 export class TimelineService {

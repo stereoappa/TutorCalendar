@@ -5,7 +5,7 @@ import {TimetablePreviewService} from './model/timetable-preview.service'
 import {MatDialog} from '@angular/material/dialog'
 import {ActivityAddDialog} from './activity-add-dialog/activity-add-dialog'
 import {ActivityAddDialogData, ActivityAddDialogResult} from './activity-add-dialog/activity-dialog-model'
-import {TimelineService} from './model/timeline.service'
+import {TimelineService} from '../../services/timeline.service'
 
 export interface TimetableUserEvent<T> {
   args: T
