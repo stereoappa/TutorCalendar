@@ -1,7 +1,5 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {ActivityAddDialogData, ActivityAddDialogResult} from "../timetable/activity-add-dialog/activity-dialog-model";
-import {TimelineService} from "../../services/timeline.service";
+import {Component, Inject, OnInit} from '@angular/core'
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog'
 
 @Component({
   selector: 'app-modal',

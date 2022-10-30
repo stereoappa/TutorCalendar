@@ -28,6 +28,10 @@
     outline: none;
   }
 
+  .ng-touched.ng-invalid {
+    background-color: #fce8e6;
+  }
+
   .bar {
     position: relative;
     display: block;

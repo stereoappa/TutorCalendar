@@ -1,4 +1,4 @@
-import {Slot} from '../timetable-column'
+import {Slot} from '../timetable/timetable-column'
 
 export interface ActivityAddDialogData {
   slot: Slot

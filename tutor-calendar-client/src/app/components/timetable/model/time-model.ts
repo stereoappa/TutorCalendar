@@ -4,7 +4,15 @@ export class Time {
               public second?: number | 0) {
   }
 
-  static createByString(str: string) {
+  static parse(str: any): Time {
+    if (str instanceof Time) {
+      return str
+    }
+
+    if (!(str instanceof String)) {
+      console.warn(`Cannot parse ${str} value as Time`, str)
+    }
+
     const arr = str.split(':')
 
     if (arr.length != 2) {
@@ -34,18 +42,25 @@ export class Time {
 }
 
 export class TimeRange {
-  start: Time | null
+  private readonly _start: Time | null
+  private readonly _end: Time | null
 
-  end: Time | null
+  get start(): Time | null {
+    return this._start
+  }
+
+  get end(): Time | null {
+    return this._end
+  }
 
   constructor(private time1: Time | null,
               private time2: Time | null) {
     if (time1?.toCompareValue() > time2?.toCompareValue()) {
-      this.start = time2
-      this.end = time1
+      this._start = time2
+      this._end = time1
     } else {
-      this.start = time1
-      this.end = time2
+      this._start = time1
+      this._end = time2
     }
   }
 

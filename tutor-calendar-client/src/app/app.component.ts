@@ -3,7 +3,6 @@ import {DateAdapter} from '../core/date-adapter'
 import {DateRange, NavDateSelectionModel} from './components/date-navigator/date-selection-model'
 import {Subscription} from 'rxjs'
 import {ColumnDay, Slot} from './components/timetable/timetable-column'
-import {Time} from './components/timetable/model/time-model'
 import {TimetableUserEvent} from './components/timetable/timetable'
 
 @Component({
@@ -12,25 +11,19 @@ import {TimetableUserEvent} from './components/timetable/timetable'
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent<D> {
-  private _valueChangesSubscription = Subscription.EMPTY
+  private _dateNavigatorSelectionChangedSubscription = Subscription.EMPTY
 
   _columns: ColumnDay<D>[] | null
 
-  _startTimeline: Time
-
-  _endTimeline: Time
-
   constructor(private model: NavDateSelectionModel<D>,
               private _dateAdapter: DateAdapter<D>) {
-    this._startTimeline = new Time(7, 0)
-    this._endTimeline = new Time(23, 0)
     this._columns = this._columns ?? [this._toColumnDay(this._dateAdapter.today())]
     this._registerModel(model)
   }
 
   _registerModel(model: NavDateSelectionModel<D>): void {
-    this._valueChangesSubscription.unsubscribe()
-    this._valueChangesSubscription = model.selectionChanged.subscribe(event => {
+    this._dateNavigatorSelectionChangedSubscription.unsubscribe()
+    this._dateNavigatorSelectionChangedSubscription = model.selectionChanged.subscribe(event => {
       this._initColumns(event.selection)
     })
   }

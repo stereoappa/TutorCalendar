@@ -1,5 +1,5 @@
 import {Component} from '@angular/core'
-import {PreviewData} from './model/timetable-preview.service'
+import {PreviewData} from '../../services/timetable-preview.service'
 import {Slot} from './timetable-column'
 
 @Component({

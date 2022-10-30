@@ -13,13 +13,13 @@ import {NAV_MOMENT_DATE_FORMATS} from '../core/moment-adapter/moment-date-format
 import {TimetableSlot} from './components/timetable/timetable-slot'
 import {TimetableColumn} from './components/timetable/timetable-column'
 import {TimetablePreview} from './components/timetable/timetable-preview'
-import {TimetablePreviewService} from './components/timetable/model/timetable-preview.service'
+import {TimetablePreviewService} from './services/timetable-preview.service'
 import {OverlayModule} from '@angular/cdk/overlay'
-import {ActivityAddDialog} from './components/timetable/activity-add-dialog/activity-add-dialog'
+import {ActivityAddDialog} from './components/activity-add-dialog/activity-add-dialog'
 import {MatDialogModule} from '@angular/material/dialog'
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
 import {DragDropModule} from '@angular/cdk/drag-drop'
-import {FormsModule} from '@angular/forms'
+import {FormsModule, ReactiveFormsModule} from '@angular/forms'
 import {TimelineService} from './services/timeline.service';
 import { ModalComponent } from './components/modal/modal.component'
 
@@ -42,7 +42,8 @@ import { ModalComponent } from './components/modal/modal.component'
     MatDialogModule,
     DragDropModule,
     BrowserAnimationsModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     {

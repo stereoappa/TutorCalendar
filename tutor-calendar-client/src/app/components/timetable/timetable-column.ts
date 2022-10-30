@@ -112,7 +112,6 @@ export class TimetableColumn {
         this.datekey,
         event.clientY,
         action),
-      event
     }))
   }
 

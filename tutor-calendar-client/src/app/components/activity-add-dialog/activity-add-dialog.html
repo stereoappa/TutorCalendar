@@ -1,0 +1,76 @@
+<div
+  cdkDrag
+  cdkDragBoundary="body"
+  cdkDragRootElement=".cdk-overlay-pane"
+  class="modal-window"
+  data-modal="window">
+  <div
+    mat-dialog-title
+    class="modal-header"
+    data-modal="header"
+    cdkDragHandle>
+    <span></span>
+    <span mat-dialog-close class="modal-close" data-close="true">&times;</span>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <mat-dialog-content class="modal-body" data-modal="body">
+      <div class="modal-content">
+        <div class="row">
+          <div class="title">
+            <input matInput
+                   formControlName="title"
+                   (focusout)="updateInitialData($event)"
+                   data-model="title"
+                   placeholder="Добавьте название"
+                   type="text"/>
+            <span class="bar"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="icon-wrapper">
+          <i class="material-icons">access_time</i>
+        </div>
+
+        <div class="field date">
+          <div class="group">
+            <input class="datepicker" data-model="date" type="text"/>
+            <span class="bar"></span>
+          </div>
+        </div>
+
+        <div class="field time">
+
+          <div class="group">
+            <app-dropdown-input
+              formControlName="timeRangeStart"
+              (focusout)="updateInitialData($event)"
+              [converter]="convertToTime"
+              [options]="_times"
+            ></app-dropdown-input>
+
+            <span class="bar"></span>
+          </div>
+        </div>
+        <span>–</span>
+        <div class="field time">
+          <div class="group">
+            <app-dropdown-input
+              formControlName="timeRangeEnd"
+              (focusout)="updateInitialData($event)"
+              [options]="_times"
+            ></app-dropdown-input>
+            <span class="bar"></span>
+          </div>
+        </div>
+      </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="modal-footer" data-modal="footer">
+      <button mat-button cdkFocusInitial type="submit">Сохранить</button>
+    </mat-dialog-actions>
+  </form>
+</div>
+

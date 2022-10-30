@@ -2,7 +2,7 @@
   <div class="row">
     <div class="timeline"></div>
     <div class="line-delta"></div>
-    <div class="table-title" *ngFor="let col of columns">
+    <div class="table-title" *ngFor="let col of _columns">
       <div class="title-grid-serif"></div>
       <div class="data weekday">{{col.weekday.narrow | uppercase}}</div>
       <div class="data number-day">{{col.title}}</div>
@@ -12,14 +12,14 @@
   <div class="row">
     <div class="table-container">
       <div class="timeline" data-role="timeline" #timeline>
-        <div *ngFor="let point of timelineBase"
+        <div *ngFor="let point of mainTimeline"
              class="time-point"
              data-time-point="{{point.toString()}}">{{point.toString()}}
         </div>
       </div>
 
       <div class="grid">
-        <div role="row" *ngFor="let point of timelineBase"></div>
+        <div role="row" *ngFor="let _ of mainTimeline"></div>
       </div>
 
       <div class="vertical-grid-line line-delta"></div>
