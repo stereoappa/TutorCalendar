@@ -42,13 +42,12 @@
         </div>
 
         <div class="field time">
-
           <div class="group">
             <app-dropdown-input
               formControlName="timeRangeStart"
-              (focusout)="updateInitialData($event)"
+              (valueChanged)="updateInitialData($event)"
               [converter]="convertToTime"
-              [options]="_times"
+              [options]="_timeOptions"
             ></app-dropdown-input>
 
             <span class="bar"></span>
@@ -59,8 +58,9 @@
           <div class="group">
             <app-dropdown-input
               formControlName="timeRangeEnd"
-              (focusout)="updateInitialData($event)"
-              [options]="_times"
+              (valueChanged)="updateInitialData($event)"
+              [converter]="convertToTime"
+              [options]="_timeOptions"
             ></app-dropdown-input>
             <span class="bar"></span>
           </div>

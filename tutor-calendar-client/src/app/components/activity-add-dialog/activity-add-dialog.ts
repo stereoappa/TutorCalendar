@@ -12,7 +12,7 @@ import {TimetablePreviewService} from '../../services/timetable-preview.service'
   styleUrls: ['./activity-add-dialog.scss']
 })
 export class ActivityAddDialog {
-  _times: string[]
+  _timeOptions: string[]
 
   form: FormGroup
 
@@ -22,7 +22,7 @@ export class ActivityAddDialog {
     private readonly _timelineService: TimelineService,
     private readonly _previewService: TimetablePreviewService) {
 
-    this._times = _timelineService.createTimeline(_timelineService.previewPrecision).map(t => t.toString())
+    this._timeOptions = _timelineService.createTimeline(_timelineService.previewPrecision).map(t => t.toString())
 
     this.form = new FormGroup({
       title: new FormControl<string>(initialData.slot.title, [

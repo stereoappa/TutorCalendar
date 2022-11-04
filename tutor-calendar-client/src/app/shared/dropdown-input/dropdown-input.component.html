@@ -1,3 +1,15 @@
-<input [(ngModel)]="value"
-       (focusout)="setValue()"
-       (focusin)="open($event)" />
+<div>
+  <input [(ngModel)]="value"
+         (focusin)="open($event)" />
+</div>
+<div *ngIf = "isOpened" class="dropdown-options">
+  <div class="dropdown-options-container">
+    <div *ngFor="let option of options"
+         (click)="setValue($event)"
+         class="dropdown-option"
+         [attr.data-time-value]="option">
+      {{option | titlecase}}
+    </div>
+  </div>
+</div>
+
