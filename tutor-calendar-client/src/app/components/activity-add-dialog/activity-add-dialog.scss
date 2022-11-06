@@ -96,10 +96,6 @@
       .field.date {
         @include input(195px);
       }
-
-      .field.time {
-        @include input(54px);
-      }
     }
   }
 

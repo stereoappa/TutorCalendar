@@ -9,8 +9,9 @@ export class Time {
       return str
     }
 
-    if (!(str instanceof String)) {
+    if (!str) {
       console.warn(`Cannot parse ${str} value as Time`, str)
+      return
     }
 
     const arr = str.split(':')

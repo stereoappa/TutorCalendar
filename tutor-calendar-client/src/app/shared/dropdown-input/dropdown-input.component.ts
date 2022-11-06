@@ -1,56 +1,52 @@
 import {Component, EventEmitter, forwardRef, Input, Output, Provider} from '@angular/core'
-import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms'
-import {NavCalendarCell, NavCalendarUserEvent} from "../../components/date-navigator/nav-calendar-body";
-import {Time} from "../../components/timetable/model/time-model";
-import {TimetableUserEvent} from "../../components/timetable/timetable";
-
-const VALUE_ACCESSOR: Provider = {
-  provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => DropdownInputComponent),
-  multi: true
-}
-
-type Converter<T> = (value: string) => T
+import {ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR} from '@angular/forms'
+import {TimetableUserEvent} from '../../components/timetable/timetable'
+import {Converter} from '../converters'
 
 @Component({
   selector: 'app-dropdown-input',
   templateUrl: './dropdown-input.component.html',
   styleUrls: ['./dropdown-input.component.scss'],
-  providers: [VALUE_ACCESSOR]
 })
 export class DropdownInputComponent<T> implements ControlValueAccessor {
-  @Input() options: string[]
+  @Input() options: T[]
 
   @Input() converter: Converter<T> | null
 
+  @Input() isOpened: boolean
+
+  @Output() isOpenedChange = new EventEmitter<boolean>()
+
   @Output() readonly valueChanged = new EventEmitter<TimetableUserEvent<T>>()
 
-  value: string
+  @Output() readonly inputValue = new EventEmitter<TimetableUserEvent<string>>()
 
-  isOpened: boolean
+  @Input() value: T
 
   constructor() {
   }
 
   setValue(event) {
-    this.close()
-
-    const selectedValue = (event.target as HTMLElement).getAttribute('data-time-value')
+    // this.close()
+    const selectedValue = (event.target as HTMLElement).getAttribute('data-value')
 
     if (!selectedValue) {
+      this.close()
       return
     }
 
     if (!this.converter) {
     }
 
-    const time = this.converter(selectedValue)
+    const convertedValue = this.converter(selectedValue)
 
-    this.writeValue(time.toString())
-    this.onChange(time.toString())
+    this.writeValue(convertedValue.toString())
+    this.onChange(convertedValue.toString())
+
+    this.close()
 
     this.valueChanged.emit({
-      args: time,
+      args: convertedValue,
     })
   }
 
@@ -69,13 +65,27 @@ export class DropdownInputComponent<T> implements ControlValueAccessor {
     this.value = value
   }
 
-  open(event) {
-    this.isOpened = true
-    console.log('opened', event.target)
+  open() {
+    this.isOpenedChange.emit(true)
+    // this.isOpened = true
   }
 
   close() {
-    this.isOpened = false
-    console.log('closed')
+    this.isOpenedChange.emit(false)
+  }
+
+  onInputValueChange(value: string) {
+    const convertedValue = this.converter(value)
+    if (convertedValue) {
+      this.valueChanged.emit({
+        args: convertedValue,
+      })
+
+      return
+    }
+
+    this.inputValue.emit({
+      args: value
+    })
   }
 }

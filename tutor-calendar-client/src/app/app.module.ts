@@ -20,8 +20,11 @@ import {MatDialogModule} from '@angular/material/dialog'
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
 import {DragDropModule} from '@angular/cdk/drag-drop'
 import {FormsModule, ReactiveFormsModule} from '@angular/forms'
-import {TimelineService} from './services/timeline.service';
+import {TimelineService} from './services/timeline.service'
 import { ModalComponent } from './components/modal/modal.component'
+import { TimeRangeSelectorComponent } from './components/time-range-selector/time-range-selector.component'
+import { StartWithTimeFilterPipe } from './pipes/start-with-time-filter.pipe';
+import { TextFilterPipe } from './pipes/text-filter.pipe'
 
 @NgModule({
   declarations: [
@@ -33,7 +36,10 @@ import { ModalComponent } from './components/modal/modal.component'
     TimetableColumn,
     TimetablePreview,
     ActivityAddDialog,
-    ModalComponent
+    ModalComponent,
+    TimeRangeSelectorComponent,
+    StartWithTimeFilterPipe,
+    TextFilterPipe
   ],
   imports: [
     BrowserModule,

@@ -27,7 +27,7 @@ export class TimelineService {
     return this.endTimeline.addMinutes(this.mainTimestep)
   }
 
-  createTimeline(step: number) {
+  createTimeline(step: number): Time[] {
     const scale = [this.startTimeline.clone()]
     const lastTimePoint = () => scale[scale.length - 1]
     while (lastTimePoint().hour < this.endTimeline.hour) {

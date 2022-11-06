@@ -20,7 +20,6 @@
           <div class="title">
             <input matInput
                    formControlName="title"
-                   (focusout)="updateInitialData($event)"
                    data-model="title"
                    placeholder="Добавьте название"
                    type="text"/>
@@ -41,30 +40,10 @@
           </div>
         </div>
 
-        <div class="field time">
-          <div class="group">
-            <app-dropdown-input
-              formControlName="timeRangeStart"
-              (valueChanged)="updateInitialData($event)"
-              [converter]="convertToTime"
-              [options]="_timeOptions"
-            ></app-dropdown-input>
+        <app-time-range-selector
+          formControlName="timeRange">
+        </app-time-range-selector>
 
-            <span class="bar"></span>
-          </div>
-        </div>
-        <span>–</span>
-        <div class="field time">
-          <div class="group">
-            <app-dropdown-input
-              formControlName="timeRangeEnd"
-              (valueChanged)="updateInitialData($event)"
-              [converter]="convertToTime"
-              [options]="_timeOptions"
-            ></app-dropdown-input>
-            <span class="bar"></span>
-          </div>
-        </div>
       </div>
     </mat-dialog-content>
 

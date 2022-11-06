@@ -1,0 +1,28 @@
+<div class="field time">
+  <div class="group">
+    <app-dropdown-input
+      [value]="startValue"
+      [(isOpened)]="startDropdownOpened"
+      [converter]="timeConverter"
+      [options]="_timeOptions"
+      (valueChanged)="onStartTimeChanged($event)"
+    ></app-dropdown-input>
+    <span class="bar"></span>
+  </div>
+</div>
+
+<span>–</span>
+
+<div class="field time">
+  <div class="group">
+    <app-dropdown-input
+      [value]="endValue"
+      [(isOpened)]="endDropdownOpened"
+      [converter]="timeConverter"
+      [options]="_timeOptions | startWithTimeFilter:startValue"
+      (inputValue)="onInputValue($event)"
+      (valueChanged)="onEndTimeChanged($event)"
+    ></app-dropdown-input>
+    <span class="bar"></span>
+  </div>
+</div>
