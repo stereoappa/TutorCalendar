@@ -137,5 +137,8 @@
       }
     }
   },
-  "defaultProject": "tutor-calendar-client"
+  "defaultProject": "tutor-calendar-client",
+  "cli": {
+    "analytics": false
+  }
 }
