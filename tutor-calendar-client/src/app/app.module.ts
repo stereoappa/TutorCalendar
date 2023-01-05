@@ -23,8 +23,6 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms'
 import {TimelineService} from './services/timeline.service'
 import { ModalComponent } from './components/modal/modal.component'
 import { TimeRangeSelectorComponent } from './components/time-range-selector/time-range-selector.component'
-import { StartWithTimeFilterPipe } from './pipes/start-with-time-filter.pipe';
-import { TextFilterPipe } from './pipes/text-filter.pipe'
 
 @NgModule({
   declarations: [
@@ -38,8 +36,6 @@ import { TextFilterPipe } from './pipes/text-filter.pipe'
     ActivityAddDialog,
     ModalComponent,
     TimeRangeSelectorComponent,
-    StartWithTimeFilterPipe,
-    TextFilterPipe
   ],
   imports: [
     BrowserModule,
