@@ -10,6 +10,7 @@ import {
   NG_VALUE_ACCESSOR,
   NgControl,
 } from '@angular/forms'
+import {filter, from, map, Observable, of, tap, toArray} from 'rxjs'
 
 @Component({
   selector: 'app-time-range-selector',
@@ -24,7 +25,9 @@ import {
   ],
 })
 export class TimeRangeSelectorComponent implements OnInit, ControlValueAccessor {
-  _timeOptions: Time[]
+  _startTimeOptions$: Observable<Time[]>
+
+  _endTimeOptions$: Observable<Time[]>
 
   _startDropdownOpenedVal: boolean | null
 
@@ -34,14 +37,12 @@ export class TimeRangeSelectorComponent implements OnInit, ControlValueAccessor 
 
   inputValue: string
 
-  // @Output() readonly timeRangeChanged = new EventEmitter<TimetableUserEvent<TimeRange>>()
-
   timeConverter: Converter<Time> = value => Time.parse(value)
 
   constructor(
     @Inject(Injector) private injector: Injector,
     private readonly _timelineService: TimelineService) {
-    this._timeOptions = _timelineService.createTimeline(_timelineService.previewPrecision)
+    this.updateTimeOptions()
   }
 
   ngOnInit(): void {
@@ -104,7 +105,14 @@ export class TimeRangeSelectorComponent implements OnInit, ControlValueAccessor 
   }
 
   onStartTimeChanged(event: TimetableUserEvent<Time>) {
-    this.control.setValue(new TimeRange(event.args, this.endValue))
+    let endValue = this.endValue
+
+    if (event.args.toCompareValue() >= endValue.toCompareValue()) {
+      endValue = event.args.addMinutes(this.startValue.differenceMinutes(endValue))
+    }
+
+    this.control.setValue(new TimeRange(event.args, endValue))
+    this.updateTimeOptions()
   }
 
   onEndTimeChanged(event: TimetableUserEvent<Time>) {
@@ -113,5 +121,20 @@ export class TimeRangeSelectorComponent implements OnInit, ControlValueAccessor 
 
   onInputValue(event: TimetableUserEvent<string>) {
     this.inputValue = event.args
+  }
+
+  private updateTimeOptions() {
+    const timeline$ = from(this._timelineService.createTimeline(this._timelineService.previewPrecision))
+
+    this._startTimeOptions$ = timeline$
+      .pipe(
+        toArray()
+      )
+
+    this._endTimeOptions$ = timeline$
+      .pipe(
+        filter(time => time.toCompareValue() > this.startValue.toCompareValue()),
+        toArray()
+      )
   }
 }

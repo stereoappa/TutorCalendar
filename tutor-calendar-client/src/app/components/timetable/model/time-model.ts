@@ -40,6 +40,10 @@ export class Time {
   clone() {
     return new Time(this.hour, this.minute, this.second)
   }
+
+  differenceMinutes(secondTime: Time): number {
+    return Math.abs(this.hour - secondTime.hour) * 60 + Math.abs(this.minute - secondTime.minute)
+  }
 }
 
 export class TimeRange {

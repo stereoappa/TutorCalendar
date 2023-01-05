@@ -4,7 +4,7 @@
       [value]="startValue"
       [(isOpened)]="startDropdownOpened"
       [converter]="timeConverter"
-      [options]="_timeOptions"
+      [options]="_startTimeOptions$ | async"
       (valueChanged)="onStartTimeChanged($event)"
     ></app-dropdown-input>
     <span class="bar"></span>
@@ -19,7 +19,7 @@
       [value]="endValue"
       [(isOpened)]="endDropdownOpened"
       [converter]="timeConverter"
-      [options]="_timeOptions | startWithTimeFilter:startValue"
+      [options]="_endTimeOptions$ | async"
       (inputValue)="onInputValue($event)"
       (valueChanged)="onEndTimeChanged($event)"
     ></app-dropdown-input>
