@@ -1,5 +1,5 @@
 import {Component, OnChanges, OnInit, SimpleChanges} from '@angular/core'
-import {DateRange, NavDateSelectionModel} from '../date-navigator/date-selection-model'
+import {DateRange, DateSelectionService} from '../../services/date-selection-service'
 import {DateAdapter} from '../../../core/date-adapter'
 
 @Component({
@@ -9,7 +9,7 @@ import {DateAdapter} from '../../../core/date-adapter'
 })
 export class SidebarComponent<D> implements OnInit, OnChanges {
   constructor(
-    private _model: NavDateSelectionModel<D>,
+    private _model: DateSelectionService<D>,
     private _dateAdapter: DateAdapter<D>) {
   }
 

@@ -9,7 +9,7 @@ import {
   SimpleChanges
 } from '@angular/core'
 import {DateAdapter} from '../../../core/date-adapter'
-import {DateRange, NavDateSelectionModel} from './date-selection-model'
+import {DateRange, DateSelectionService} from '../../services/date-selection-service'
 import {NavCalendarCell, NavCalendarUserEvent} from './nav-calendar-body'
 import {DateFormats, NAV_DATE_FORMATS} from '../../../core/date-formats'
 
@@ -79,7 +79,7 @@ export class NavCalendar<D> implements AfterContentInit, OnChanges {
 
   _weekdays: { long: string, narrow: string }[]
 
-  constructor(private _model: NavDateSelectionModel<D>,
+  constructor(private _model: DateSelectionService<D>,
               @Optional() public _dateAdapter: DateAdapter<D>,
               @Optional() @Inject(NAV_DATE_FORMATS) private _dateFormats: DateFormats) {
   }
