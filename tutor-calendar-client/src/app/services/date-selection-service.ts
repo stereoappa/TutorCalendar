@@ -5,10 +5,17 @@ import {Observable, Subject} from 'rxjs'
 export class DateRange<D> {
   constructor(
     readonly start: D | null,
-    readonly end: D | null) {}
+    readonly end: D | null) {
+    if (start > end) {
+      this.start = end
+      this.end = start
+    }
+  }
 }
 
 export interface DateSelectionModelChange<S, D> {
+  dateRange: S
+
   selectedDays: Array<D>
 
   source: unknown
@@ -18,7 +25,10 @@ export interface DateSelectionModelChange<S, D> {
 
 @Injectable({providedIn: 'root'})
 export class DateSelectionService<D> {
-  selection: D
+  get selection(): D | DateRange<D> {
+    return this._selection
+  }
+  private _selection: D | DateRange<D>
 
   private readonly _selectionChanged = new Subject<DateSelectionModelChange<D | DateRange<D>, D>>()
 
@@ -28,10 +38,11 @@ export class DateSelectionService<D> {
    }
 
   updateSelection(value: D | DateRange<D>, source: unknown) {
-    const oldValue = (this as {selection: D | DateRange<D>}).selection;
-    (this as {selection: D | DateRange<D>}).selection = value
+    const oldValue = (this as {selection: D | DateRange<D>}).selection
+    this._selection = value
 
     this._selectionChanged.next({
+      dateRange: value,
       selectedDays: this.toDays(value),
       source,
       oldValue

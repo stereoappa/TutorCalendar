@@ -4,7 +4,7 @@ import {
   Component,
   Inject,
   Input,
-  OnChanges,
+  OnChanges, OnDestroy,
   Optional,
   SimpleChanges
 } from '@angular/core'
@@ -12,6 +12,7 @@ import {DateAdapter} from '../../../core/date-adapter'
 import {DateRange, DateSelectionService} from '../../services/date-selection-service'
 import {NavCalendarCell, NavCalendarUserEvent} from './nav-calendar-body'
 import {DateFormats, NAV_DATE_FORMATS} from '../../../core/date-formats'
+import {Subscription} from 'rxjs'
 
 const DAYS_PER_WEEK = 7
 
@@ -21,28 +22,7 @@ const DAYS_PER_WEEK = 7
   styleUrls: ['./nav-calendar.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NavCalendar<D> implements AfterContentInit, OnChanges {
-  @Input()
-  get startAt(): D | null { return this._startAt }
-  set startAt(value: D | null) {
-    this._startAt = this._dateAdapter.getValidDateOrNull(this._dateAdapter.deserialize(value))
-  }
-  private _startAt: D | null
-
-  @Input()
-  get selected(): DateRange<D> | D | null {
-    return this._selected
-  }
-  set selected(value: DateRange<D> | D | null) {
-    if (value instanceof DateRange) {
-      this._selected = value
-    } else {
-      this._selected = this._dateAdapter.getValidDateOrNull(this._dateAdapter.deserialize(value))
-    }
-    this._setRanges(this.selected)
-  }
-  private _selected: DateRange<D> | D | null
-
+export class NavCalendar<D> implements AfterContentInit, OnChanges, OnDestroy {
   @Input()
   get activeDate(): D {
     return this._activeDate
@@ -79,13 +59,24 @@ export class NavCalendar<D> implements AfterContentInit, OnChanges {
 
   _weekdays: { long: string, narrow: string }[]
 
-  constructor(private _model: DateSelectionService<D>,
+  private _dateNavigatorSelectionChangedSubscription = Subscription.EMPTY
+
+  constructor(private dateSelectionService: DateSelectionService<D>,
               @Optional() public _dateAdapter: DateAdapter<D>,
               @Optional() @Inject(NAV_DATE_FORMATS) private _dateFormats: DateFormats) {
+    this.subscribeOnSelectionChanged()
+  }
+
+  private subscribeOnSelectionChanged(): void {
+    this._dateNavigatorSelectionChangedSubscription.unsubscribe()
+    this._dateNavigatorSelectionChangedSubscription = this.dateSelectionService.selectionChanged.subscribe(event => {
+      this.selectDateRangeCells(event.dateRange)
+    })
   }
 
   ngAfterContentInit(): void {
-    this.activeDate = this.startAt || this._dateAdapter.today()
+    console.log((this.dateSelectionService.selection as D) ?? (this.dateSelectionService.selection as DateRange<D>).start)
+    this.activeDate = (this.dateSelectionService.selection as D) ?? (this.dateSelectionService.selection as DateRange<D>).start
     this._init()
   }
 
@@ -93,7 +84,6 @@ export class NavCalendar<D> implements AfterContentInit, OnChanges {
   }
 
   _init(): void {
-    this._setRanges(this.selected)
     this._monthLabel = this._dateFormats.display.monthYearA11yLabel
       ? this._dateAdapter.format(this.activeDate, this._dateFormats.display.monthYearA11yLabel)
       : this._dateAdapter.getMonthNames('long')[this._dateAdapter.getMonth(this.activeDate)]
@@ -177,7 +167,7 @@ export class NavCalendar<D> implements AfterContentInit, OnChanges {
     const selectedDate = this._dateAdapter.parse(event.args)
     this._previewStart = this._previewEnd = null
 
-    this._model.updateSelection(selectedDate, this)
+    this.dateSelectionService.updateSelection(selectedDate, this)
   }
 
   _previewChanged(event: NavCalendarUserEvent<NavCalendarCell<D> | null>) {
@@ -188,32 +178,23 @@ export class NavCalendar<D> implements AfterContentInit, OnChanges {
       }
 
       this._previewEnd = this._getCellCompareValue(event.args.rawValue)
-      this.selected = this._createPreview()
+      this.selectDateRangeCells(this.createPreviewDateRange())
 
       return
     }
 
     this._previewEnd = this._getCellCompareValue(event.args.rawValue)
-    this._model.updateSelection(this._createPreview(), this)
+
+    this.dateSelectionService.updateSelection(this.createPreviewDateRange(), this)
 
     this._previewStart = this._previewEnd = null
   }
 
-  _createPreview(): DateRange<D> {
-    let start: number | null = null
-    let end: number | null = null
-
-    if (this._previewStart < this._previewEnd) {
-      start = this._previewStart
-      end = this._previewEnd
-    }
-
-    if (this._previewStart > this._previewEnd) {
-      start = this._previewEnd
-      end = this._previewStart
-    }
-
-    return new DateRange<D>(this._dateAdapter.parse(start), this._dateAdapter.parse(end))
+  private createPreviewDateRange(): DateRange<D> {
+    return new DateRange<D>(
+      this._dateAdapter.parse(this._previewStart),
+      this._dateAdapter.parse(this._previewEnd)
+    )
   }
 
   private _hasSameMonthAndYear(d1: D | null, d2: D | null): boolean {
@@ -221,7 +202,7 @@ export class NavCalendar<D> implements AfterContentInit, OnChanges {
       this._dateAdapter.getYear(d1) === this._dateAdapter.getYear(d2))
   }
 
-  private _setRanges(selectedValue: DateRange<D> | D | null): void {
+  private selectDateRangeCells(selectedValue: DateRange<D> | D | null): void {
     if (selectedValue instanceof DateRange) {
       this._rangeStart = this._getCellCompareValue(selectedValue.start)
       this._rangeEnd = this._getCellCompareValue(selectedValue.end)
@@ -241,6 +222,10 @@ export class NavCalendar<D> implements AfterContentInit, OnChanges {
     }
 
     return null
+  }
+
+  ngOnDestroy(): void {
+    this._dateNavigatorSelectionChangedSubscription.unsubscribe()
   }
 }
 

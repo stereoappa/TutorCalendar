@@ -1,5 +1,5 @@
 import {Component, OnChanges, OnInit, SimpleChanges} from '@angular/core'
-import {DateRange, DateSelectionService} from '../../services/date-selection-service'
+import {DateSelectionService} from '../../services/date-selection-service'
 import {DateAdapter} from '../../../core/date-adapter'
 
 @Component({
@@ -9,19 +9,11 @@ import {DateAdapter} from '../../../core/date-adapter'
 })
 export class SidebarComponent<D> implements OnInit, OnChanges {
   constructor(
-    private _model: DateSelectionService<D>,
+    private dateSelectionService: DateSelectionService<D>,
     private _dateAdapter: DateAdapter<D>) {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-  }
-
-  _getSelected() {
-    return this._model.selection as unknown as D | DateRange<D> | null
-  }
-
-  _getStartAt(): D | null {
-    return this._dateAdapter.today()
   }
 
   ngOnInit(): void {
