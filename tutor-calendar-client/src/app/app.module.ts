@@ -24,6 +24,7 @@ import {TimelineService} from './services/timeline.service'
 import { ModalComponent } from './components/modal/modal.component'
 import { TimeRangeSelectorComponent } from './components/time-range-selector/time-range-selector.component'
 import {DateSelectionService} from './services/date-selection-service'
+import {DateNavigatorModule} from './components/date-navigator/date-navigator.module'
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import {DateSelectionService} from './services/date-selection-service'
     DragDropModule,
     BrowserAnimationsModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DateNavigatorModule,
   ],
   providers: [
     {
