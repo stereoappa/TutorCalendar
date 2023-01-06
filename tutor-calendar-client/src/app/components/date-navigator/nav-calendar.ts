@@ -75,8 +75,10 @@ export class NavCalendar<D> implements AfterContentInit, OnChanges, OnDestroy {
   }
 
   ngAfterContentInit(): void {
-    console.log((this.dateSelectionService.selection as D) ?? (this.dateSelectionService.selection as DateRange<D>).start)
-    this.activeDate = (this.dateSelectionService.selection as D) ?? (this.dateSelectionService.selection as DateRange<D>).start
+    this.activeDate = this.dateSelectionService.days.length > 0 ?
+      this.dateSelectionService.days[0] :
+      this._dateAdapter.today()
+
     this._init()
   }
 

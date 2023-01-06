@@ -1,4 +1,4 @@
-import {FactoryProvider, Injectable, Optional, SkipSelf } from '@angular/core'
+import {Injectable} from '@angular/core'
 import {DateAdapter} from '../../core/date-adapter'
 import {Observable, Subject} from 'rxjs'
 
@@ -30,6 +30,10 @@ export class DateSelectionService<D> {
   }
   private _selection: D | DateRange<D>
 
+  get days(): D[] {
+    return this.toDays(this.selection)
+  }
+
   private readonly _selectionChanged = new Subject<DateSelectionModelChange<D | DateRange<D>, D>>()
 
   selectionChanged: Observable<DateSelectionModelChange<D | DateRange<D>, D>> = this._selectionChanged
@@ -54,6 +58,10 @@ export class DateSelectionService<D> {
   }
 
   private toDays(selection: D | DateRange<D> | null): D[] {
+    if (!selection) {
+      return []
+    }
+
     if (selection instanceof DateRange) {
       const range = selection as DateRange<D>
       return this.dateAdapter.toArray(range.start, range.end)
@@ -62,18 +70,4 @@ export class DateSelectionService<D> {
       return [day]
     }
   }
-}
-
-export function NAV_RANGE_DATE_SELECTION_SERVICE_FACTORY(
-  parent: DateSelectionService<unknown>, adapter: DateAdapter<unknown>) {
-  return new DateSelectionService(adapter)
-}
-
-/**
- * Used to provide a range selection model to a components.
- **/
-export const NAV_RANGE_DATE_SELECTION_SERVICE_PROVIDER: FactoryProvider = {
-  provide: DateSelectionService,
-  deps: [[new Optional(), new SkipSelf(), DateSelectionService], DateAdapter],
-  useFactory: NAV_RANGE_DATE_SELECTION_SERVICE_FACTORY,
 }

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, ViewChild} from '@angular/core'
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core'
 import {Time} from './model/time-model'
 import {ColumnDay, TimetableColumnActionEventArgs} from './timetable-column'
 import {TimetablePreviewService} from '../../services/timetable-preview.service'
@@ -6,7 +6,7 @@ import {ActivityAddDialog} from '../activity-add-dialog/activity-add-dialog'
 import {ActivityAddDialogData, ActivityAddDialogResult} from '../activity-add-dialog/activity-dialog-model'
 import {TimelineService} from '../../services/timeline.service'
 import {ModalService} from '../../services/modal.service'
-import {DateSelectionService} from '../../services/date-selection-service'
+import {DateRange, DateSelectionService} from '../../services/date-selection-service'
 import {Subscription} from 'rxjs'
 import {DateAdapter} from '../../../core/date-adapter'
 
@@ -19,7 +19,7 @@ export interface TimetableUserEvent<T> {
   templateUrl: './timetable.html',
   styleUrls: ['./timetable.scss']
 })
-export class Timetable<D> implements AfterViewInit, OnDestroy {
+export class Timetable<D> implements OnInit, AfterViewInit, OnDestroy {
   private _dateNavigatorSelectionChangedSubscription = Subscription.EMPTY
 
   @ViewChild('timeline') timelineRef: ElementRef<HTMLElement>
@@ -45,7 +45,14 @@ export class Timetable<D> implements AfterViewInit, OnDestroy {
               private dialogService: ModalService,
               private _dateAdapter: DateAdapter<D>) {
     this.subscribeOnSelectionChanged()
-    this.dateSelectionService.updateSelection(this._dateAdapter.today(), this)
+  }
+
+  ngOnInit(): void {
+    // TODO: temp line
+     this.dateSelectionService.updateSelection(
+       new DateRange<D>(this._dateAdapter.today(),
+         this._dateAdapter.addCalendarDays(this._dateAdapter.today(),
+           2)), this)
   }
 
   ngAfterViewInit() {
@@ -74,10 +81,6 @@ export class Timetable<D> implements AfterViewInit, OnDestroy {
       const slotPreview = this._previewService.getPreview(event.args.datekey)
       this.openActivityAddDialog({slot: slotPreview})
     }
-  }
-
-  ngOnDestroy(): void {
-    this._dateNavigatorSelectionChangedSubscription.unsubscribe()
   }
 
   private openActivityAddDialog(data: ActivityAddDialogData): void {
@@ -116,5 +119,9 @@ export class Timetable<D> implements AfterViewInit, OnDestroy {
       this._dateAdapter.getDateKey(day),
       day,
       [])
+  }
+
+  ngOnDestroy(): void {
+    this._dateNavigatorSelectionChangedSubscription.unsubscribe()
   }
 }

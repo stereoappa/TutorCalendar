@@ -23,6 +23,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms'
 import {TimelineService} from './services/timeline.service'
 import { ModalComponent } from './components/modal/modal.component'
 import { TimeRangeSelectorComponent } from './components/time-range-selector/time-range-selector.component'
+import {DateSelectionService} from './services/date-selection-service'
 
 @NgModule({
   declarations: [
@@ -61,8 +62,9 @@ import { TimeRangeSelectorComponent } from './components/time-range-selector/tim
       provide: NAV_DATE_FORMATS,
       useValue: NAV_MOMENT_DATE_FORMATS
     },
+    DateSelectionService,
     TimelineService,
-    TimetablePreviewService
+    TimetablePreviewService,
   ],
   bootstrap: [AppComponent]
 })
