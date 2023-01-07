@@ -53,7 +53,7 @@ export class NavCalendar<D> implements OnChanges, OnDestroy {
 
   private subscribeOnSelectionChanged(): void {
     this._monthChangedSubscription.unsubscribe()
-    this._monthChangedSubscription = this.dateSelectionService.activeMonth$.subscribe(_ => this._init())
+    this._monthChangedSubscription = this.dateSelectionService.activeMonth$.subscribe(this.generate.bind(this))
 
     this._dateNavigatorSelectionChangedSubscription.unsubscribe()
     this._dateNavigatorSelectionChangedSubscription = this.dateSelectionService.selectionChanged.subscribe(event => {
@@ -64,10 +64,10 @@ export class NavCalendar<D> implements OnChanges, OnDestroy {
   ngOnChanges(changes: SimpleChanges): void {
   }
 
-  _init(): void {
+  generate(activeMonth): void {
     const firstOfMonth = this._dateAdapter.createDate(
-      this._dateAdapter.getYear(this.dateSelectionService.activeMonth$.value),
-      this._dateAdapter.getMonth(this.dateSelectionService.activeMonth$.value), 1)
+      this._dateAdapter.getYear(activeMonth),
+      this._dateAdapter.getMonth(activeMonth), 1)
 
     const firstOfNextMonth = this._dateAdapter.addCalendarMonths(firstOfMonth, 1)
 
@@ -78,7 +78,7 @@ export class NavCalendar<D> implements OnChanges, OnDestroy {
       this._dateAdapter.getFirstDayOfWeek()) % DAYS_PER_WEEK
 
     this._initWeekdays()
-    this._createWeekCells()
+    this._createWeekCells(activeMonth)
   }
 
   private _initWeekdays(): void {
@@ -92,14 +92,14 @@ export class NavCalendar<D> implements OnChanges, OnDestroy {
     this._weekdays = weekdays.slice(firstDayOfWeek).concat(weekdays.slice(0, firstDayOfWeek))
   }
 
-  private _createWeekCells(): void {
-    const daysInMonth = this._dateAdapter.getNumDaysInMonth(this.dateSelectionService.activeMonth$.value)
+  private _createWeekCells(activeMonth): void {
+    const daysInMonth = this._dateAdapter.getNumDaysInMonth(activeMonth)
     this._weeks = [[]]
 
     const firstWeekStart = this._dateAdapter.getStartOfWeek(
       this._dateAdapter.createDate(
-        this._dateAdapter.getYear(this.dateSelectionService.activeMonth$.value),
-        this._dateAdapter.getMonth(this.dateSelectionService.activeMonth$.value), 1))
+        this._dateAdapter.getYear(activeMonth),
+        this._dateAdapter.getMonth(activeMonth), 1))
 
     for (let i = 0, cell = 0; i < this._firstWeekOffset + daysInMonth + this._lastWeekOffset; i++, cell++) {
       if (cell === DAYS_PER_WEEK) {
